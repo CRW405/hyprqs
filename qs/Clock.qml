@@ -2,17 +2,17 @@ import QtQuick
 
 Text {
     id: clock
-    property bool showDetailed: false
+    property bool showDetailed: true
     color: "white"
     text: ""
 
     function updateText() {
         var now = new Date()
         if (clock.showDetailed) {
-            var day = Qt.formatDateTime(now, "ddd")
-            clock.text = day + " - " + Qt.formatDateTime(now, "hh:mm:ss - MM/dd/yyyy")
+            var day = Qt.formatDateTime(now, "dddd")
+            clock.text = day + " - " + Qt.formatDateTime(now, "hh:mm:ss A - MM/dd/yyyy")
         } else {
-            clock.text = Qt.formatDateTime(now, "hh:mm")
+            clock.text = Qt.formatDateTime(now, "hh:mm A")
         }
     }
 

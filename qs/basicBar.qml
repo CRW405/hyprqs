@@ -1,11 +1,10 @@
-import Quickshell
-import Quickshell.Wayland
-import Quickshell.Io
 import QtQuick
 import QtQuick.Layouts
+import Quickshell
+import Quickshell.Io
+import Quickshell.Wayland
 
 ShellRoot {
-
     MemPoller {
         id: memPoller
     }
@@ -30,64 +29,68 @@ ShellRoot {
         model: Quickshell.screens
 
         delegate: Component {
-
-
             PanelWindow {
-
+                id: barWindow
 
                 required property var modelData
+                property bool showCpuFahrenheit: false
+                property bool showGpuFahrenheit: false
+
                 screen: modelData
+                anchors.top: true
+                anchors.left: true
+                anchors.right: true
+                implicitHeight: 25
+                color: "grey"
 
-        id: barWindow
-        anchors.top: true
-        anchors.left: true
-        anchors.right: true
-        implicitHeight: 20
-        color: "grey"
-        property bool showCpuFahrenheit: false
-        property bool showGpuFahrenheit: false
+                RowLayout {
+                    anchors.fill: parent
 
-        RowLayout {
-            anchors.fill: parent
+                    WorkspaceSwitcher {
+                    }
 
-            WorkspaceSwitcher {}
+                    Clock {
+                    }
 
-            UsageLabel {
-                label: "CPU"
-                value: cpuPoller.cpuUsage
+                    UsageLabel {
+                        label: "CPU: "
+                        value: cpuPoller.cpuUsage
+                        append: "%"
+                    }
+
+                    UsageLabel {
+                        label: "Mem: "
+                        value: memPoller.memUsage
+                        append: "%"
+                    }
+
+                    TempToggleLabel {
+                        label: "CPU: "
+                        tempC: cpuTempPoller.tempC
+                        tempF: cpuTempPoller.tempF
+                        onClicked: barWindow.showCpuFahrenheit = !barWindow.showCpuFahrenheit
+                    }
+
+                    TempToggleLabel {
+                        label: "GPU: "
+                        tempC: gpuTempPoller.tempC
+                        tempF: gpuTempPoller.tempF
+                        onClicked: barWindow.showGpuFahrenheit = !barWindow.showGpuFahrenheit
+                    }
+
+                    DiskUsageLabel {
+                        label: "Disk: "
+                        usedStorage: storagePoller.usedStorage
+                        totalStorage: storagePoller.totalStorage
+                        percentage: storagePoller.percentage
+                    }
+
+                }
+
             }
 
-            UsageLabel {
-                label: "Mem"
-                value: memPoller.memUsage
-            }
-
-            TempToggleLabel {
-                label: "CPU Temp"
-                tempC: cpuTempPoller.tempC
-                tempF: cpuTempPoller.tempF
-                showFahrenheit: barWindow.showCpuFahrenheit
-                onClicked: barWindow.showCpuFahrenheit = !barWindow.showCpuFahrenheit
-            }
-
-            TempToggleLabel {
-                label: "GPU Temp"
-                tempC: gpuTempPoller.tempC
-                tempF: gpuTempPoller.tempF
-                showFahrenheit: barWindow.showGpuFahrenheit
-                onClicked: barWindow.showGpuFahrenheit = !barWindow.showGpuFahrenheit
-            }
-
-            DiskUsageLabel {
-                usedStorage: storagePoller.usedStorage
-                totalStorage: storagePoller.totalStorage
-                percentage: storagePoller.percentage
-            }
-
-
-            Clock {}
         }
+
     }
-}
-}
+
 }

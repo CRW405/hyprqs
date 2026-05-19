@@ -9,7 +9,7 @@ Text {
     property int warningThresholdC: 80
     signal clicked()
 
-    text: label + ": " + (showFahrenheit ? tempF : tempC) + "°" + (showFahrenheit ? "F" : "C")
+    text: label + (showFahrenheit ? tempF : tempC) + "°" + (showFahrenheit ? "F" : "C")
     color: tempC > warningThresholdC ? "red" : "white"
 
     MouseArea {
