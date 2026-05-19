@@ -1,5 +1,6 @@
 import Quickshell
 import Quickshell.Wayland
+import Quickshell.Io
 import QtQuick
 import QtQuick.Layouts
 
@@ -25,13 +26,24 @@ ShellRoot {
         id: storagePoller
     }
 
-    PanelWindow {
+    Variants {
+        model: Quickshell.screens
+
+        delegate: Component {
+
+
+            PanelWindow {
+
+
+                required property var modelData
+                screen: modelData
+
         id: barWindow
         anchors.top: true
         anchors.left: true
         anchors.right: true
         implicitHeight: 20
-        color: "transparent"
+        color: "grey"
         property bool showCpuFahrenheit: false
         property bool showGpuFahrenheit: false
 
@@ -76,4 +88,6 @@ ShellRoot {
             Clock {}
         }
     }
+}
+}
 }
