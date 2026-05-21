@@ -41,11 +41,6 @@ ShellRoot {
         id: idleInhibitorPoller
     }
 
-    CavaPoller {
-        id: cavaPoller
-        configPath: Qt.urlToLocalFile(Qt.resolvedUrl("cava.conf"))
-    }
-
     Variants {
         model: Quickshell.screens
 
@@ -66,17 +61,12 @@ ShellRoot {
 
                 RowLayout {
                     // TODO:
-                    // Battery
-                    // Power settings
-                    // System Logo or User Logo or Profile Picture
                     // Notifications
                     // System Tray
                     // Hover time to see calender
-                    // Idle Inhibitor
                     // Toggle cpu and ram labels for different modes such as mem amount and core
                     // Volume manager
                     // Night Light / HyprSunset Manager
-                    // cava integration
                     // Dashboard dropdown:
                     //      Notifications
                     //      picture thing
@@ -90,6 +80,10 @@ ShellRoot {
                     anchors.fill: parent
 
                     WorkspaceSwitcher {
+                    }
+
+                    CavaBars {
+                        Layout.alignment: Qt.AlignVCenter
                     }
 
                     Clock {
@@ -152,13 +146,6 @@ ShellRoot {
                     IdleInhibitorButton {
                         inhibitEnabled: idleInhibitorPoller.inhibitEnabled
                         onToggleRequested: idleInhibitorPoller.toggle()
-                    }
-
-                    CavaBars {
-                        values: cavaPoller.barValues
-                        maxValue: cavaPoller.maxValue
-                        barHeight: 12
-                        visible: cavaPoller.barValues.length > 0
                     }
 
                 }
