@@ -13,6 +13,14 @@ ShellRoot {
         id: cpuPoller
     }
 
+    BatteryPoller {
+        id: batteryPoller
+    }
+
+    BatteryStatusPoller {
+        id: batteryStatusPoller
+    }
+
     CpuTempPoller {
         id: cpuTempPoller
     }
@@ -23,6 +31,19 @@ ShellRoot {
 
     StoragePoller {
         id: storagePoller
+    }
+
+    PowerProfilePoller {
+        id: powerProfilePoller
+    }
+
+    IdleInhibitorPoller {
+        id: idleInhibitorPoller
+    }
+
+    CavaPoller {
+        id: cavaPoller
+        configPath: Qt.urlToLocalFile(Qt.resolvedUrl("cava.conf"))
     }
 
     Variants {
@@ -74,6 +95,19 @@ ShellRoot {
                     Clock {
                     }
 
+                    BatteryWidget {
+                        percentage: batteryPoller.percentage
+                        charging: batteryPoller.isCharging
+                        visible: batteryPoller.hasBattery
+                    }
+
+                    BatteryStatusLabel {
+                        status: batteryStatusPoller.status
+                        timeToFullSec: batteryStatusPoller.timeToFullSec
+                        hasBattery: batteryStatusPoller.hasBattery
+                        visible: batteryStatusPoller.hasBattery
+                    }
+
                     UsageLabel {
                         label: "CPU: "
                         value: cpuPoller.cpuUsage
@@ -107,6 +141,24 @@ ShellRoot {
                         usedStorage: storagePoller.usedStorage
                         totalStorage: storagePoller.totalStorage
                         percentage: storagePoller.percentage
+                    }
+
+                    PowerProfileButton {
+                        profile: powerProfilePoller.profile
+                        availableProfiles: powerProfilePoller.availableProfiles
+                        visible: powerProfilePoller.availableProfiles.length > 0
+                    }
+
+                    IdleInhibitorButton {
+                        inhibitEnabled: idleInhibitorPoller.inhibitEnabled
+                        onToggleRequested: idleInhibitorPoller.toggle()
+                    }
+
+                    CavaBars {
+                        values: cavaPoller.barValues
+                        maxValue: cavaPoller.maxValue
+                        barHeight: 12
+                        visible: cavaPoller.barValues.length > 0
                     }
 
                 }
