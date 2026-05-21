@@ -140,10 +140,25 @@ RowLayout {
         command: [
             "sh",
             "-c",
-            "find /usr/share/icons /usr/share/pixmaps ~/.local/share/icons ~/.icons "
-                + "-type f \\( -name '*.png' -o -name '*.svg' -o -name '*.xpm' \\) "
-                + "-printf '%f\\t%p\\n' 2>/dev/null | awk -F '\\t' '"
-                + "{name=$1; sub(/\\.[^.]*$/, \"\", name); lname=tolower(name); if (!(lname in seen)) {seen[lname]=1; print lname \"\\t\" $2}}'"
+            "cache=\"$HOME/.cache/hyprqs/icon-index.tsv\"; "
+                + "cache_dir=\"${cache%/*}\"; "
+                + "max_age=86400; "
+                + "mkdir -p \"$cache_dir\"; "
+                + "now=$(date +%s); "
+                + "if [ -f \"$cache\" ]; then "
+                + "  mtime=$(stat -c %Y \"$cache\" 2>/dev/null || echo 0); "
+                + "else "
+                + "  mtime=0; "
+                + "fi; "
+                + "if [ $((now - mtime)) -lt $max_age ]; then "
+                + "  cat \"$cache\"; "
+                + "else "
+                + "  find /usr/share/icons /usr/share/pixmaps ~/.local/share/icons ~/.icons "
+                + "    -type f \\( -name '*.png' -o -name '*.svg' -o -name '*.xpm' \\) "
+                + "    -printf '%f\\t%p\\n' 2>/dev/null | awk -F '\\t' '"
+                + "    {name=$1; sub(/\\.[^.]*$/, \"\", name); lname=tolower(name); if (!(lname in seen)) {seen[lname]=1; print lname \"\\t\" $2}}' "
+                + "    | tee \"$cache\"; "
+                + "fi"
         ]
 
         stdout: StdioCollector {

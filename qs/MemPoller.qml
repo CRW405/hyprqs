@@ -28,6 +28,6 @@ Item {
         interval: 2000
         running: true
         repeat: true
-        onTriggered: memProc.running = true
+        onTriggered: if (!memProc.running) memProc.running = true
     }
 }

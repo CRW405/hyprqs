@@ -29,6 +29,6 @@ Item {
         interval: 4000
         running: true
         repeat: true
-        onTriggered: tempProc.running = true
+        onTriggered: if (!tempProc.running) tempProc.running = true
     }
 }

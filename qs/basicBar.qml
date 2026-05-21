@@ -45,6 +45,8 @@ ShellRoot {
 
                 RowLayout {
                     // TODO:
+                    // Battery
+                    // Power settings
                     // System Logo or User Logo or Profile Picture
                     // Notifications
                     // System Tray
@@ -88,6 +90,7 @@ ShellRoot {
                         label: "CPU: "
                         tempC: cpuTempPoller.tempC
                         tempF: cpuTempPoller.tempF
+                        showFahrenheit: barWindow.showCpuFahrenheit
                         onClicked: barWindow.showCpuFahrenheit = !barWindow.showCpuFahrenheit
                     }
 
@@ -95,6 +98,7 @@ ShellRoot {
                         label: "GPU: "
                         tempC: gpuTempPoller.tempC
                         tempF: gpuTempPoller.tempF
+                        showFahrenheit: barWindow.showGpuFahrenheit
                         onClicked: barWindow.showGpuFahrenheit = !barWindow.showGpuFahrenheit
                     }
 

@@ -29,6 +29,6 @@ Item {
         interval: 4000
         running: true
         repeat: true
-        onTriggered: gpuProc.running = true
+        onTriggered: if (!gpuProc.running) gpuProc.running = true
     }
 }

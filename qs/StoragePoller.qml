@@ -33,6 +33,6 @@ Item {
         interval: 10000 // Storage fills slowly; a 10-second poll interval is plenty
         running: true
         repeat: true
-        onTriggered: storageProc.running = true
+        onTriggered: if (!storageProc.running) storageProc.running = true
     }
 }

@@ -36,6 +36,6 @@ Item {
         interval: 2000
         running: true
         repeat: true
-        onTriggered: cpuProc.running = true
+        onTriggered: if (!cpuProc.running) cpuProc.running = true
     }
 }
