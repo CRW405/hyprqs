@@ -4,7 +4,7 @@ import Quickshell.Io
 Item {
     id: root
 
-    property int bars: 20
+    property int bars: 20 // change it in cava.conf too
     property int maxValue: 1000
     property int barWidth: 3
     property int barSpacing: 1
@@ -12,7 +12,6 @@ Item {
     property color barColor: "white"
     property color backgroundColor: "transparent"
     property var values: []
-
     readonly property string cavaConfigPath: Qt.resolvedUrl("cava.conf").toString().replace("file://", "")
 
     implicitWidth: (bars * barWidth) + ((bars - 1) * barSpacing) + padding * 2
@@ -43,22 +42,25 @@ Item {
                 color: root.barColor
                 anchors.bottom: parent.bottom
             }
+
         }
+
     }
 
     Process {
         id: cavaProc
 
         command: ["cava", "-p", root.cavaConfigPath]
+        Component.onCompleted: running = true
 
         stdout: SplitParser {
-            onRead: data => {
+            onRead: (data) => {
                 if (!data)
-                    return;
+                    return ;
 
                 const parts = data.trim().split(";");
                 if (parts.length < root.bars)
-                    return;
+                    return ;
 
                 const next = [];
                 for (let i = 0; i < root.bars; i++) {
@@ -69,13 +71,17 @@ Item {
             }
         }
 
-        Component.onCompleted: running = true
     }
 
     Timer {
         interval: 2000
         running: true
         repeat: true
-        onTriggered: if (!cavaProc.running) cavaProc.running = true
+        onTriggered: {
+            if (!cavaProc.running)
+                cavaProc.running = true;
+
+        }
     }
+
 }

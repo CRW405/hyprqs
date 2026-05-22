@@ -12,6 +12,8 @@
 ### Wallpaper Manager
 - Either Rofi or QS
 
+### Searchable Binds
+
 ### dotfiles
 
 #### Kitty
