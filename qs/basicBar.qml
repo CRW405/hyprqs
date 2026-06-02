@@ -41,6 +41,10 @@ ShellRoot {
         id: idleInhibitorPoller
     }
 
+    Seperator {
+        id: seperator
+    }
+
     Variants {
         model: Quickshell.screens
 
@@ -51,13 +55,15 @@ ShellRoot {
                 required property var modelData
                 property bool showCpuFahrenheit: false
                 property bool showGpuFahrenheit: false
+                property var fontSize: 12
+                property var fontColor: "#FFFFFF"
 
                 screen: modelData
                 anchors.top: true
                 anchors.left: true
                 anchors.right: true
                 implicitHeight: 25
-                color: "grey"
+                color: "#222222"
 
                 RowLayout {
                     // TODO:
@@ -82,17 +88,29 @@ ShellRoot {
                     WorkspaceSwitcher {
                     }
 
+                    Seperator {
+                    }
+
                     CavaBars {
                         Layout.alignment: Qt.AlignVCenter
                     }
 
+                    Seperator {
+                    }
+
                     Clock {
+                    }
+
+                    Seperator {
                     }
 
                     BatteryWidget {
                         percentage: batteryPoller.percentage
                         charging: batteryPoller.isCharging
                         visible: batteryPoller.hasBattery
+                    }
+
+                    Seperator {
                     }
 
                     BatteryStatusLabel {
@@ -102,45 +120,63 @@ ShellRoot {
                         visible: batteryStatusPoller.hasBattery
                     }
 
+                    Seperator {
+                    }
+
                     UsageLabel {
-                        label: "CPU: "
+                        label: "C: "
                         value: cpuPoller.cpuUsage
                         append: "%"
                     }
 
-                    UsageLabel {
-                        label: "Mem: "
-                        value: memPoller.memUsage
-                        append: "%"
-                    }
-
                     TempToggleLabel {
-                        label: "CPU: "
                         tempC: cpuTempPoller.tempC
                         tempF: cpuTempPoller.tempF
                         showFahrenheit: barWindow.showCpuFahrenheit
                         onClicked: barWindow.showCpuFahrenheit = !barWindow.showCpuFahrenheit
                     }
 
+                    Seperator {
+                    }
+
+                    UsageLabel {
+                        label: "M: "
+                        value: memPoller.memUsage
+                        append: "%"
+                    }
+
+                    Seperator {
+                    }
+
                     TempToggleLabel {
-                        label: "GPU: "
+                        label: "G: "
                         tempC: gpuTempPoller.tempC
                         tempF: gpuTempPoller.tempF
                         showFahrenheit: barWindow.showGpuFahrenheit
                         onClicked: barWindow.showGpuFahrenheit = !barWindow.showGpuFahrenheit
                     }
 
+                    Seperator {
+                    }
+
                     DiskUsageLabel {
-                        label: "Disk: "
+                        // percentage: storagePoller.percentage
+
+                        label: "D: "
                         usedStorage: storagePoller.usedStorage
                         totalStorage: storagePoller.totalStorage
-                        percentage: storagePoller.percentage
+                    }
+
+                    Seperator {
                     }
 
                     PowerProfileButton {
                         profile: powerProfilePoller.profile
                         availableProfiles: powerProfilePoller.availableProfiles
                         visible: powerProfilePoller.availableProfiles.length > 0
+                    }
+
+                    Seperator {
                     }
 
                     IdleInhibitorButton {

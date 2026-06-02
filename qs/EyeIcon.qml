@@ -2,6 +2,7 @@ import QtQuick
 
 Item {
     id: root
+
     property bool open: true
     property color color: "white"
 
@@ -26,10 +27,11 @@ Item {
     }
 
     Rectangle {
-        width: parent.width - 4
+        width: parent.width / 3
         height: 2
         anchors.centerIn: parent
         color: root.color
         visible: !root.open
     }
+
 }
