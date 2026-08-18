@@ -1,6 +1,7 @@
 import QtQuick
+import "../common"
 
-Text {
+ThresholdText {
     id: tempLabel
     property string label: ""
     property int tempC: 0
@@ -9,8 +10,9 @@ Text {
     property int warningThresholdC: 80
     signal clicked()
 
+    value: tempC
+    warningThreshold: warningThresholdC
     text: label + (showFahrenheit ? tempF : tempC) + "°" + (showFahrenheit ? "F" : "C")
-    color: tempC > warningThresholdC ? "red" : "white"
 
     MouseArea {
         anchors.fill: parent

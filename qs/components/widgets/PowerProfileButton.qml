@@ -1,14 +1,19 @@
-import Quickshell
 import Quickshell.Io
 import QtQuick
 import QtQuick.Layouts
+import "../common"
+import "../icons"
+import "../../theme" as Theme
 
 RowLayout {
     id: root
     property string profile: "unknown"
     property var availableProfiles: []
+    property color textColor: Theme.Theme.fg
+    property int fontSize: Theme.Theme.fontSize
+    property int iconSize: Theme.Theme.iconSize
 
-    spacing: 4
+    spacing: Theme.Theme.gap
 
     function nextProfile() {
         var list = root.availableProfiles
@@ -26,12 +31,14 @@ RowLayout {
 
     PowerProfileIcon {
         profile: root.profile
-        color: "white"
+        color: root.textColor
+        iconSize: root.iconSize
     }
 
-    Text {
+    StyledText {
         text: root.profile
-        color: "white"
+        textColor: root.textColor
+        fontSize: root.fontSize
     }
 
     MouseArea {

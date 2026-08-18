@@ -3,6 +3,8 @@ import Quickshell.Io
 import Quickshell.Widgets
 import QtQuick
 import QtQuick.Layouts
+import "../common"
+import "../../theme" as Theme
 
 // WorkspaceSwitcher shows 10 workspace "chips":
 // [workspace number] [icon] [icon] ...
@@ -14,7 +16,16 @@ import QtQuick.Layouts
 // 4) Render all icons for each workspace (including duplicates per window).
 RowLayout {
     id: root
-    spacing: 8
+    property int fontSize: Theme.Theme.fontSize
+    property color textColor: Theme.Theme.fg
+    property color activeColor: Theme.Theme.accent
+    property int iconSize: Theme.Theme.iconSize
+    property int chipPaddingX: 4
+    property int chipPaddingY: 2
+    property int chipSpacing: Theme.Theme.gap
+    property int iconSpacing: 4
+
+    spacing: chipSpacing
 
     // Map: workspaceId -> array of icon file paths.
     // Example: { 1: ["/usr/share/icons/.../librewolf.svg", "..."], 2: [...] }
@@ -209,26 +220,27 @@ RowLayout {
             property int workspaceId: index + 1
             property bool isActive: Hyprland.focusedWorkspace?.id === workspaceId
 
-            implicitWidth: contentRow.implicitWidth + 8
-            implicitHeight: contentRow.implicitHeight + 4
+            implicitWidth: contentRow.implicitWidth + (root.chipPaddingX * 2)
+            implicitHeight: contentRow.implicitHeight + (root.chipPaddingY * 2)
 
             Row {
                 id: contentRow
-                x: 4
+                x: root.chipPaddingX
                 anchors.verticalCenter: parent.verticalCenter
-                spacing: 4
+                spacing: root.iconSpacing
 
-                Text {
+                StyledText {
                     text: workspaceItem.workspaceId
-                    color: workspaceItem.isActive ? "red" : "white"
+                    textColor: workspaceItem.isActive ? root.activeColor : root.textColor
+                    fontSize: root.fontSize
                 }
 
                 Repeater {
                     model: root.iconsForWorkspace(workspaceItem.workspaceId)
 
                     Item {
-                        width: 14
-                        height: 14
+                        width: root.iconSize
+                        height: root.iconSize
 
                         IconImage {
                             anchors.fill: parent

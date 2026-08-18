@@ -1,6 +1,7 @@
 import QtQuick
+import "../common"
 
-Text {
+StyledText {
     id: root
     property string status: "Unknown"
     property int timeToFullSec: 0
@@ -32,7 +33,6 @@ Text {
         }
         return label
     }
-    color: "white"
     visible: root.hasBattery
 
     MouseArea {

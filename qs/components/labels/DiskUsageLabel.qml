@@ -1,12 +1,14 @@
 import QtQuick
+import "../common"
 
-Text {
+ThresholdText {
+    id: root
     property string usedStorage: ""
     property string totalStorage: ""
     property int percentage: 0
-    property int warningThreshold: 90
     property string label: ""
 
+    value: percentage
+    warningThreshold: 90
     text: (usedStorage && totalStorage) ? label + usedStorage + "/" + totalStorage + " (" + percentage + "%)" : label + percentage + "%"
-    color: percentage > warningThreshold ? "red" : "white"
 }

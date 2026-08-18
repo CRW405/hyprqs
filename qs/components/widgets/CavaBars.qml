@@ -1,5 +1,6 @@
 import QtQuick
 import Quickshell.Io
+import "../../theme" as Theme
 
 Item {
     id: root
@@ -9,18 +10,21 @@ Item {
     property int barWidth: 3
     property int barSpacing: 1
     property int padding: 2
-    property color barColor: "white"
+    property int barHeight: Theme.Theme.iconSize + 2
+    property int radius: Theme.Theme.radius
+    property int barRadius: Math.max(1, Math.round(barWidth / 2))
+    property color barColor: Theme.Theme.accent
     property color backgroundColor: "transparent"
     property var values: []
     readonly property string cavaConfigPath: Qt.resolvedUrl("cava.conf").toString().replace("file://", "")
 
     implicitWidth: (bars * barWidth) + ((bars - 1) * barSpacing) + padding * 2
-    implicitHeight: 18
+    implicitHeight: barHeight
 
     Rectangle {
         anchors.fill: parent
         color: root.backgroundColor
-        radius: 3
+        radius: root.radius
     }
 
     Row {
@@ -38,7 +42,7 @@ Item {
             Rectangle {
                 width: root.barWidth
                 height: Math.max(1, Math.round(((root.values[index] || 0) / root.maxValue) * (root.height - root.padding * 2)))
-                radius: 1
+                radius: root.barRadius
                 color: root.barColor
                 anchors.bottom: parent.bottom
             }

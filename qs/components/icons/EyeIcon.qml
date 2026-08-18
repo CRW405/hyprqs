@@ -1,13 +1,16 @@
 import QtQuick
+import "../../theme" as Theme
 
 Item {
     id: root
 
     property bool open: true
-    property color color: "white"
+    property color color: Theme.Theme.fg
+    property int iconWidth: Theme.Theme.iconSize + 2
+    property int iconHeight: Math.round(iconWidth * 0.6)
 
-    width: 18
-    height: 10
+    width: iconWidth
+    height: iconHeight
 
     Rectangle {
         anchors.fill: parent
