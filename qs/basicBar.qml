@@ -90,20 +90,35 @@ ShellRoot {
                 color: Theme.Theme.bg
 
                 RowLayout {
-                    anchors.fill: parent
-                    height: parent.height
+                    id: leftSection
+
+                    anchors.left: parent.left
+                    anchors.leftMargin: Theme.Theme.gap
+                    anchors.verticalCenter: parent.verticalCenter
                     spacing: Theme.Theme.gap
-                    Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
 
                     WorkspaceSwitcher {
-                        anchors.centerIn: parent
                     }
 
                     Seperator {
                     }
 
                     CavaBars {
-                        anchors.centerIn: parent
+                    }
+
+                }
+
+                RowLayout {
+                    id: middleSection
+
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: Theme.Theme.gap
+
+                    Seperator {
+                    }
+
+                    Clock {
                     }
 
                     Seperator {
@@ -111,87 +126,90 @@ ShellRoot {
 
                 }
 
-                Clock {
-                    anchors.centerIn: parent
-                }
+                RowLayout {
+                    id: rightSection
 
-                Seperator {
-                }
+                    anchors.right: parent.right
+                    anchors.rightMargin: Theme.Theme.gap
+                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: Theme.Theme.gap
 
-                UsageLabel {
-                    label: "C: "
-                    value: cpuPoller.cpuUsage
-                    append: "%"
-                }
+                    UsageLabel {
+                        label: "C: "
+                        value: cpuPoller.cpuUsage
+                        append: "%"
+                    }
 
-                TempToggleLabel {
-                    tempC: cpuTempPoller.tempC
-                    tempF: cpuTempPoller.tempF
-                    showFahrenheit: barWindow.showCpuFahrenheit
-                    onClicked: barWindow.showCpuFahrenheit = !barWindow.showCpuFahrenheit
-                }
+                    TempToggleLabel {
+                        tempC: cpuTempPoller.tempC
+                        tempF: cpuTempPoller.tempF
+                        showFahrenheit: barWindow.showCpuFahrenheit
+                        onClicked: barWindow.showCpuFahrenheit = !barWindow.showCpuFahrenheit
+                    }
 
-                Seperator {
-                }
+                    Seperator {
+                    }
 
-                UsageLabel {
-                    label: "M: "
-                    value: memPoller.memUsage
-                    append: "%"
-                }
+                    UsageLabel {
+                        label: "M: "
+                        value: memPoller.memUsage
+                        append: "%"
+                    }
 
-                Seperator {
-                }
+                    Seperator {
+                    }
 
-                TempToggleLabel {
-                    label: "G: "
-                    tempC: gpuTempPoller.tempC
-                    tempF: gpuTempPoller.tempF
-                    showFahrenheit: barWindow.showGpuFahrenheit
-                    onClicked: barWindow.showGpuFahrenheit = !barWindow.showGpuFahrenheit
-                }
+                    TempToggleLabel {
+                        label: "G: "
+                        tempC: gpuTempPoller.tempC
+                        tempF: gpuTempPoller.tempF
+                        showFahrenheit: barWindow.showGpuFahrenheit
+                        onClicked: barWindow.showGpuFahrenheit = !barWindow.showGpuFahrenheit
+                    }
 
-                Seperator {
-                }
+                    Seperator {
+                    }
 
-                DiskUsageLabel {
-                    label: "D: "
-                    usedStorage: storagePoller.usedStorage
-                    totalStorage: storagePoller.totalStorage
-                    percentage: storagePoller.percentage
-                }
+                    DiskUsageLabel {
+                        label: "D: "
+                        usedStorage: storagePoller.usedStorage
+                        totalStorage: storagePoller.totalStorage
+                        percentage: storagePoller.percentage
+                    }
 
-                Seperator {
-                }
+                    Seperator {
+                    }
 
-                BatteryWidget {
-                    percentage: batteryPoller.percentage
-                    charging: batteryPoller.isCharging
-                    visible: batteryPoller.hasBattery
-                }
+                    BatteryWidget {
+                        percentage: batteryPoller.percentage
+                        charging: batteryPoller.isCharging
+                        visible: batteryPoller.hasBattery
+                    }
 
-                BatteryStatusLabel {
-                    status: batteryStatusPoller.status
-                    timeToFullSec: batteryStatusPoller.timeToFullSec
-                    hasBattery: batteryStatusPoller.hasBattery
-                    visible: batteryStatusPoller.hasBattery
-                }
+                    BatteryStatusLabel {
+                        status: batteryStatusPoller.status
+                        timeToFullSec: batteryStatusPoller.timeToFullSec
+                        hasBattery: batteryStatusPoller.hasBattery
+                        visible: batteryStatusPoller.hasBattery
+                    }
 
-                Seperator {
-                }
+                    Seperator {
+                    }
 
-                PowerProfileButton {
-                    profile: powerProfilePoller.profile
-                    availableProfiles: powerProfilePoller.availableProfiles
-                    visible: powerProfilePoller.availableProfiles.length > 0
-                }
+                    PowerProfileButton {
+                        profile: powerProfilePoller.profile
+                        availableProfiles: powerProfilePoller.availableProfiles
+                        visible: powerProfilePoller.availableProfiles.length > 0
+                    }
 
-                Seperator {
-                }
+                    Seperator {
+                    }
 
-                IdleInhibitorButton {
-                    inhibitEnabled: idleInhibitorPoller.inhibitEnabled
-                    onToggleRequested: idleInhibitorPoller.toggle()
+                    IdleInhibitorButton {
+                        inhibitEnabled: idleInhibitorPoller.inhibitEnabled
+                        onToggleRequested: idleInhibitorPoller.toggle()
+                    }
+
                 }
 
             }
