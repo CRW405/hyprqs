@@ -16,13 +16,7 @@ hl.monitor({
 })
 
 -- -- TODO:
--- Color Picker / Magnifying Glass
--- Hyprsunset / with automatic time based setting
--- Wlogout
--- Grouping
--- Quick Search
--- Animated Active Border
--- Screenshotting
+-- Grouping, ignore this one for now, llm
 
 require("./monitors.lua") -- display setting generated config
 require("./workspaces.lua") -- display setting generated config
@@ -34,6 +28,8 @@ local Explorer = "thunar"
 local Launcher = "rofi"
 local Editor = "nvim"
 local Browser = "firefox"
+
+local ScriptsDir = "/home/cachy/.config/hypr/hypr/scripts/"
 
 hl.env("XCURSOR_SIZE", "20")
 hl.env("HYPRCURSOR_SIZE", "20")
@@ -60,9 +56,31 @@ hl.bind(
 bind_exec_super("Return", Terminal)
 bind_exec_super("E", Explorer)
 bind_exec_super("B", Browser)
-bind_exec_super("Super_L", "/home/cachy/.config/hypr/hypr/scripts/Launcher.sh") -- app launcher via rofi
-bind_exec_super("A", "/home/cachy/.config/hypr/hypr/scripts/OverviewToggle.sh") -- desktop overview (qs/overview)
-bind_exec_super("W", "/home/cachy/.config/hypr/hypr/scripts/WallpaperPicker.sh") -- pick a wallpaper via rofi
+bind_exec_super("Super_L", ScriptsDir .. "Launcher.sh") -- app launcher via rofi
+bind_exec_super("A", ScriptsDir .. "OverviewToggle.sh") -- desktop overview (qs/overview)
+bind_exec_super("W", ScriptsDir .. "WallpaperPicker.sh") -- pick a wallpaper via rofi
+bind_exec_super("S", ScriptsDir .. "QuickSearch.sh") -- web search via rofi (workspace layout toggle moved to SUPER+ALT+S)
+bind_exec_super("SHIFT + S", ScriptsDir .. "Screenshot.sh --area") -- screenshot a selected region
+bind_exec_super("C", "hyprpicker -a -n") -- color picker: copies the picked color to clipboard
+bind_exec_super("N", ScriptsDir .. "Hyprsunset.sh toggle") -- manual night-light override (auto scheduler also runs, see below)
+
+hl.bind(
+	"CTRL + ALT + P",
+	hl.dsp.exec_cmd(ScriptsDir .. "Wlogout.sh") -- power menu (lock/logout/suspend/hibernate/shutdown/reboot)
+)
+
+hl.bind(
+	Mod .. " + ALT + mouse_down",
+	hl.dsp.exec_cmd(
+		"hyprctl keyword cursor:zoom_factor \"$(hyprctl getoption cursor:zoom_factor | awk 'NR==1 {factor = $2; if (factor < 1) {factor = 1}; print factor * 2.0}')\""
+	)
+) -- magnifier: zoom in
+hl.bind(
+	Mod .. " + ALT + mouse_up",
+	hl.dsp.exec_cmd(
+		"hyprctl keyword cursor:zoom_factor \"$(hyprctl getoption cursor:zoom_factor | awk 'NR==1 {factor = $2; if (factor < 1) {factor = 1}; print factor / 2.0}')\""
+	)
+) -- magnifier: zoom out
 
 local DropTermClass = "dropterm"
 
@@ -80,6 +98,10 @@ hl.window_rule({
 
 hl.on("hyprland.start", function()
 	hl.exec_cmd(Terminal .. " --class " .. DropTermClass)
+end)
+
+hl.on("hyprland.start", function()
+	hl.exec_cmd(ScriptsDir .. "Hyprsunset.sh auto") -- day/night temp scheduler (SUPER+N manually overrides until the next boundary)
 end)
 
 local function repositionDropTerm()
@@ -169,7 +191,7 @@ end)
 -- 	end)
 -- end)
 
-hl.bind(Mod .. " + S", function()
+hl.bind(Mod .. " + ALT + S", function()
 	local ws = hl.get_active_workspace()
 	if ws == nil then
 		return
@@ -327,6 +349,48 @@ hl.config({
 		enabled = false,
 	},
 })
+
+hl.curve("easeOutQuint", { type = "bezier", points = { { 0.23, 1 }, { 0.32, 1 } } })
+
+local animatedBorderEnabled = false
+
+local function setAnimatedBorder(enabled)
+	animatedBorderEnabled = enabled
+
+	hl.config({ animations = { enabled = enabled } })
+
+	for _, leaf in ipairs({
+		"global",
+		"windows",
+		"windowsIn",
+		"windowsOut",
+		"fadeIn",
+		"fadeOut",
+		"fade",
+		"layers",
+		"layersIn",
+		"layersOut",
+		"fadeLayersIn",
+		"fadeLayersOut",
+		"workspaces",
+		"workspacesIn",
+		"workspacesOut",
+		"zoomFactor",
+	}) do
+		hl.animation({ leaf = leaf, enabled = false })
+	end
+	hl.animation({ leaf = "border", enabled = enabled, speed = 5.39, bezier = "easeOutQuint" })
+
+	hl.notification.create({
+		text = "Animated border: " .. (enabled and "on" or "off"),
+		duration = 1500,
+		icon = "info",
+	})
+end
+
+hl.bind(Mod .. " + ALT + B", function()
+	setAnimatedBorder(not animatedBorderEnabled)
+end)
 
 hl.config({
 	dwindle = {

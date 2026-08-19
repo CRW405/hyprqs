@@ -178,6 +178,7 @@ ShellRoot {
                     }
 
                     Seperator {
+                        visible: batteryPoller.hasBattery
                     }
 
                     BatteryWidget {
@@ -194,12 +195,13 @@ ShellRoot {
                     }
 
                     Seperator {
+                        visible: batteryPoller.hasBattery
                     }
 
                     PowerProfileButton {
                         profile: powerProfilePoller.profile
                         availableProfiles: powerProfilePoller.availableProfiles
-                        visible: powerProfilePoller.availableProfiles.length > 0
+                        visible: batteryPoller.hasBattery && powerProfilePoller.availableProfiles.length > 0
                     }
 
                     Seperator {
