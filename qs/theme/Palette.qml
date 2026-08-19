@@ -14,23 +14,23 @@ QtObject {
 	id: root
 
 	property QtObject color: QtObject {
-		property color primary: "#0000ee"
-		property color secondary: "#33008b"
-		property color danger: "#ff4c4c"
+		property color primary: "#5c9dff"
+		property color secondary: "#b39dff"
+		property color danger: "#ff6b6b"
 		property color warning: "#ffcc00"
 		property color ok: "#4caf50"
-		property color active: "#dddddd"
-		property color inactive: "#a0a0a0"
-		property color background: "#ffffff"
-		property color background_light: "#e0e0e0"
-		property color background_dark: "#c0c0c0"
-		property color border: "#eeeeee"
-		property color border_light: "#add8e6"
-		property color border_dark: "#7777ea"
-		property color text: "#555555"
-		property color text_secondary: "#a0a0a0"
+		property color active: "#45454e"
+		property color inactive: "#6a6a72"
+		property color background: "#1c1c1e"
+		property color background_light: "#3a3a40"
+		property color background_dark: "#2a2a2e"
+		property color border: "#6e6e78"
+		property color border_light: "#5a6b9c"
+		property color border_dark: "#241b40"
+		property color text: "#d4d4d8"
+		property color text_secondary: "#6a6a72"
 		property color text_light: "#ffffff"
-		property color text_dark: "#555555"
+		property color text_dark: "#1c1c1e"
 	}
 
 	property QtObject font: QtObject {

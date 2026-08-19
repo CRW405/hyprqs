@@ -253,7 +253,7 @@ RowLayout {
 
             MouseArea {
                 anchors.fill: parent
-                onClicked: Hyprland.dispatch("workspace " + workspaceItem.workspaceId)
+                onClicked: Hyprland.dispatch(`hl.dsp.focus({workspace = ${workspaceItem.workspaceId}})`)
             }
         }
     }

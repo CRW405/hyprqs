@@ -21,7 +21,12 @@ hl.monitor({
 require("./monitors.lua") -- display setting generated config
 require("./workspaces.lua") -- display setting generated config
 
-local Style = require("./style/style.lua")
+-- Loaded via dofile (not require()) because Hyprland's built-in Lua
+-- require() shim doesn't reliably propagate a file's return value (it's
+-- built for sourcing side-effecting config files like monitors.lua above,
+-- not for pulling in a table) -- see the matching note in style/style.lua.
+local script_dir = debug.getinfo(1, "S").source:match("^@(.*/)")
+local Style = dofile(script_dir .. "style/style.lua")
 
 local Terminal = "kitty"
 local Explorer = "thunar"
