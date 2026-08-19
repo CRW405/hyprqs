@@ -4,6 +4,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 import "functions"
+import "../../theme" as Theme
 
 Singleton {
     id: root
@@ -15,19 +16,24 @@ Singleton {
     property QtObject font
     property QtObject sizes
 
+    // Seed colors only (background/on-background/primary/on-primary) come
+    // from the shared palette (Theme.Palette -> style/style.json) so the
+    // overview roughly matches the rest of the setup; everything else here
+    // is this vendored module's own Material-3 derivation (ColorUtils.mix
+    // etc. below), left untouched.
     m3colors: QtObject {
         property bool darkmode: true
-        property color m3primary: "#E5B6F2"
-        property color m3onPrimary: "#452152"
+        property color m3primary: Theme.Palette.color.primary
+        property color m3onPrimary: Theme.Palette.color.text_light
         property color m3primaryContainer: "#5D386A"
         property color m3onPrimaryContainer: "#F9D8FF"
         property color m3secondary: "#D5C0D7"
         property color m3onSecondary: "#392C3D"
         property color m3secondaryContainer: "#534457"
         property color m3onSecondaryContainer: "#F2DCF3"
-        property color m3background: "#161217"
-        property color m3onBackground: "#EAE0E7"
-        property color m3surface: "#161217"
+        property color m3background: Theme.Palette.color.background
+        property color m3onBackground: Theme.Palette.color.text
+        property color m3surface: Theme.Palette.color.background
         property color m3surfaceContainerLow: "#1F1A1F"
         property color m3surfaceContainer: "#231E23"
         property color m3surfaceContainerHigh: "#2D282E"

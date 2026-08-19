@@ -1,0 +1,30 @@
+{
+    "color": {
+        "primary": "0000ee",
+        "secondary": "33008b",
+        "danger": "ff4c4c",
+        "warning": "ffcc00",
+        "ok": "4caf50",
+        "active": "dddddd",
+        "inactive": "a0a0a0",
+        "background": "ffffff",
+        "background_light": "e0e0e0",
+        "background_dark": "c0c0c0",
+        "border": "eeeeee",
+        "border_light": "add8e6",
+        "border_dark": "7777ea",
+        "text": "555555",
+        "text_secondary": "a0a0a0",
+        "text_light": "ffffff",
+        "text_dark": "555555"
+    },
+    "font": {
+        "family": "Monospace",
+        "size": 12
+    },
+    "radius": 10,
+    "spacing": {
+        "gap": 5,
+        "padding": 10
+    }
+}
