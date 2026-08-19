@@ -1,5 +1,6 @@
 pragma Singleton
 import QtQuick
+import Quickshell
 import Quickshell.Io
 
 // Central colors/fonts/radius/spacing, shared with hyprland.lua
@@ -46,11 +47,13 @@ QtObject {
 	}
 
 	property FileView _file: FileView {
-		// Quickshell sandboxes relative path/import resolution to within the
-		// qs/ config root, so a repo-root file needs an absolute path here
-		// (matching how basicBar.qml itself is launched via an absolute
-		// path in hyprland.lua rather than a quickshell-registered config).
-		path: "/home/cachy/Documents/hyprqs/style/style.json"
+		// Qt.resolvedUrl resolves against Quickshell's virtual qrc root in
+		// -p mode, not this file's real path, so it can't be used for a
+		// relative path here (unlike CavaBars.qml's same-directory case).
+		// Quickshell.shellDir is the real directory basicBar.qml was
+		// launched from (qs/), so this stays relative to the hypr config
+		// root regardless of where it's checked out.
+		path: Quickshell.shellDir + "/../style/style.json"
 		watchChanges: true
 		onFileChanged: reload()
 		onLoaded: {
