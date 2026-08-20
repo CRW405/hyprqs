@@ -12,21 +12,21 @@ window {
   location: center;
   border: 2px;
   border-color: @border-color;
-  border-radius: 12px;
+  border-radius: @radius;
   background-color: @background-color;
 }
 
 mainbox {
   children: [ "inputbar", "listview" ];
-  padding: 10px;
+  padding: @padding;
   background-color: transparent;
 }
 
 inputbar {
   children: [ "entry" ];
   background-color: @background-alt;
-  border-radius: 12px;
-  padding: 10px;
+  border-radius: @radius;
+  padding: @padding;
   margin: 0px 0px 10px 0px;
 }
 
@@ -47,7 +47,7 @@ listview {
   fixed-height: true;
   cycle: true;
   spacing: 20px;
-  padding: 10px;
+  padding: @padding;
   background-color: transparent;
 }
 
@@ -56,12 +56,19 @@ element {
   padding: 0px;
   margin: 0px;
   spacing: 0px;
-  border-radius: 10px;
+  border-radius: @radius;
   cursor: pointer;
 }
 
+element normal.normal,
+element alternate.normal {
+  background-color: @background-alt;
+}
+
+element-text selected,
 element selected.normal {
   background-color: @selected;
+  text-color: @primary;
 }
 
 element-icon {

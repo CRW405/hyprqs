@@ -75,18 +75,20 @@ hl.bind(
 	hl.dsp.exec_cmd(ScriptsDir .. "Wlogout.sh") -- power menu (lock/logout/suspend/hibernate/shutdown/reboot)
 )
 
-hl.bind(
-	Mod .. " + ALT + mouse_down",
-	hl.dsp.exec_cmd(
-		"hyprctl keyword cursor:zoom_factor \"$(hyprctl getoption cursor:zoom_factor | awk 'NR==1 {factor = $2; if (factor < 1) {factor = 1}; print factor * 2.0}')\""
-	)
-) -- magnifier: zoom in
-hl.bind(
-	Mod .. " + ALT + mouse_up",
-	hl.dsp.exec_cmd(
-		"hyprctl keyword cursor:zoom_factor \"$(hyprctl getoption cursor:zoom_factor | awk 'NR==1 {factor = $2; if (factor < 1) {factor = 1}; print factor / 2.0}')\""
-	)
-) -- magnifier: zoom out
+local function setZoomFactor(multiplier)
+	local factor = hl.get_config("cursor:zoom_factor")
+	if factor < 1 then
+		factor = 1
+	end
+	hl.config({ cursor = { zoom_factor = factor * multiplier } })
+end
+
+hl.bind(Mod .. " + ALT + mouse_up", function()
+	setZoomFactor(2.0)
+end) -- magnifier: zoom in
+hl.bind(Mod .. " + ALT + mouse_down", function()
+	setZoomFactor(0.5)
+end) -- magnifier: zoom out
 
 local DropTermClass = "dropterm"
 
@@ -133,69 +135,6 @@ hl.bind(Mod .. " + SHIFT + Return", function()
 		hl.dispatch(hl.dsp.workspace.toggle_special("dropterm"))
 	end
 end)
-
--- hl.bind("SUPER + A", function()
--- 	hl.plugin.hyprexpo.expo("toggle")
--- end)
---
--- hl.config({
--- 	plugin = {
--- 		hyprexpo = {
--- 			columns = 2,
--- 			gaps_in = 5,
--- 			gaps_out = 0,
--- 			bg_col = "rgb(111111)",
--- 			workspace_method = "center current",
--- 			gesture_distance = 200,
--- 			cancel_key = "escape",
--- 			show_cursor = 1,
--- 			drag_drop_enable = 1,
--- 			keynav_wrap_h = 1,
--- 			keynav_wrap_v = 1,
--- 			keynav_reading_order = 0,
--- 			dynamic_grid = 0,
--- 			fill_gaps = 0,
--- 			mru_sort = 0,
--- 			show_workspace_names = 1,
--- 			label_pos = top_right,
--- 			label_size = 48,
--- 			wallpaper_bg = 1,
--- 		},
--- 	},
--- })
---
--- hl.define_submap("hyprexpo", function()
--- 	hl.bind("left", function()
--- 		hl.plugin.hyprexpo.kb_focus("left")
--- 	end)
--- 	hl.bind("h", function()
--- 		hl.plugin.hyprexpo.kb_focus("left")
--- 	end)
--- 	hl.bind("right", function()
--- 		hl.plugin.hyprexpo.kb_focus("right")
--- 	end)
--- 	hl.bind("l", function()
--- 		hl.plugin.hyprexpo.kb_focus("right")
--- 	end)
--- 	hl.bind("k", function()
--- 		hl.plugin.hyprexpo.kb_focus("up")
--- 	end)
--- 	hl.bind("up", function()
--- 		hl.plugin.hyprexpo.kb_focus("up")
--- 	end)
--- 	hl.bind("j", function()
--- 		hl.plugin.hyprexpo.kb_focus("down")
--- 	end)
--- 	hl.bind("down", function()
--- 		hl.plugin.hyprexpo.kb_focus("down")
--- 	end)
--- 	hl.bind("return", function()
--- 		hl.plugin.hyprexpo.kb_confirm()
--- 	end)
--- 	hl.bind("escape", function()
--- 		hl.plugin.hyprexpo.expo("cancel")
--- 	end)
--- end)
 
 hl.bind(Mod .. " + ALT + S", function()
 	local ws = hl.get_active_workspace()
@@ -337,7 +276,7 @@ hl.config({
 		rounding = Style.radius,
 		rounding_power = 0,
 		active_opacity = 1.0,
-		inactive_opacity = 1.0,
+		inactive_opacity = 0.9,
 		shadow = {
 			enabled = false,
 			range = 1,

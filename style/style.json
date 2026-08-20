@@ -22,7 +22,7 @@
         "family": "Monospace",
         "size": 12
     },
-    "radius": 10,
+    "radius": 0,
     "spacing": {
         "gap": 5,
         "padding": 10

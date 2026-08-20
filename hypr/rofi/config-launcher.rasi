@@ -16,13 +16,13 @@ window {
   location: center;
   border: 2px;
   border-color: @border-color;
-  border-radius: 12px;
+  border-radius: @radius;
   background-color: @background-color;
 }
 
 mainbox {
   children: [ "inputbar", "mode-switcher", "listview" ];
-  padding: 10px;
+  padding: @padding;
   spacing: 10px;
   background-color: transparent;
 }
@@ -30,8 +30,8 @@ mainbox {
 inputbar {
   children: [ "prompt", "entry" ];
   background-color: @background-alt;
-  border-radius: 12px;
-  padding: 10px;
+  border-radius: @radius;
+  padding: @padding;
   spacing: 10px;
 }
 
@@ -55,7 +55,7 @@ mode-switcher {
 
 button {
   padding: 6px 16px;
-  border-radius: 12px;
+  border-radius: @radius;
   background-color: @background-alt;
   text-color: @foreground;
   cursor: pointer;
@@ -63,7 +63,7 @@ button {
 
 button selected {
   background-color: @selected;
-  text-color: @background-color;
+  text-color: @primary;
 }
 
 listview {
@@ -79,15 +79,20 @@ listview {
 element {
   padding: 8px;
   spacing: 10px;
-  border-radius: 10px;
+  border-radius: @radius;
   cursor: pointer;
-  background-color: transparent;
+}
+
+element normal.normal,
+element alternate.normal {
+  background-color: @background-alt;
+  text-color: @foreground;
 }
 
 element-text selected,
 element selected.normal {
   background-color: @selected;
-  text-color: @background-color;
+  text-color: @primary;
 }
 
 element-icon {
