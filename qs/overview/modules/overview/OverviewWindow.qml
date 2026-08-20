@@ -16,8 +16,10 @@ Item { // Window
     property var availableWorkspaceWidth
     property var availableWorkspaceHeight
     property bool restrictToWorkspace: true
-    property real initX: Math.max(((windowData?.at[0] ?? 0) - (monitorData?.x ?? 0) - (monitorData?.reserved?.[0] ?? 0)) * root.scale, 0) + xOffset
-    property real initY: Math.max(((windowData?.at[1] ?? 0) - (monitorData?.y ?? 0) - (monitorData?.reserved?.[1] ?? 0)) * root.scale, 0) + yOffset
+    property real rawX: ((windowData?.at[0] ?? 0) - (monitorData?.x ?? 0) - (monitorData?.reserved?.[0] ?? 0)) * root.scale
+    property real rawY: ((windowData?.at[1] ?? 0) - (monitorData?.y ?? 0) - (monitorData?.reserved?.[1] ?? 0)) * root.scale
+    property real initX: (restrictToWorkspace ? Math.min(Math.max(rawX, 0), Math.max(availableWorkspaceWidth - width, 0)) : Math.max(rawX, 0)) + xOffset
+    property real initY: (restrictToWorkspace ? Math.min(Math.max(rawY, 0), Math.max(availableWorkspaceHeight - height, 0)) : Math.max(rawY, 0)) + yOffset
     property real xOffset: 0
     property real yOffset: 0
     property int widgetMonitorId: 0

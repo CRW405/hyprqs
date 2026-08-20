@@ -17,16 +17,9 @@ hl.monitor({
 	scale = "1.0",
 })
 
--- -- TODO:
--- Grouping, ignore this one for now, llm
+require("monitors")
+require("workspaces")
 
-require("monitors") -- display setting generated config
-require("workspaces") -- display setting generated config
-
--- Loaded via dofile (not require()) because Hyprland's built-in Lua
--- require() shim doesn't reliably propagate a file's return value (it's
--- built for sourcing side-effecting config files like monitors.lua above,
--- not for pulling in a table) -- see the matching note in style/style.lua.
 local Style = dofile(script_dir .. "style/style.lua")
 
 local Terminal = "kitty"
@@ -62,18 +55,16 @@ hl.bind(
 bind_exec_super("Return", Terminal)
 bind_exec_super("E", Explorer)
 bind_exec_super("B", Browser)
-bind_exec_super("Super_L", ScriptsDir .. "Launcher.sh") -- app launcher via rofi
-bind_exec_super("A", ScriptsDir .. "OverviewToggle.sh") -- desktop overview (qs/overview)
-bind_exec_super("W", ScriptsDir .. "WallpaperPicker.sh") -- pick a wallpaper via rofi
-bind_exec_super("S", ScriptsDir .. "QuickSearch.sh") -- web search via rofi (workspace layout toggle moved to SUPER+ALT+S)
-bind_exec_super("SHIFT + S", ScriptsDir .. "Screenshot.sh --area") -- screenshot a selected region
-bind_exec_super("C", "hyprpicker -a -n") -- color picker: copies the picked color to clipboard
-bind_exec_super("N", ScriptsDir .. "Hyprsunset.sh toggle") -- manual night-light override (auto scheduler also runs, see below)
+bind_exec_super("V", "kitty nvim")
+bind_exec_super("Super_L", ScriptsDir .. "Launcher.sh")
+bind_exec_super("A", ScriptsDir .. "OverviewToggle.sh")
+bind_exec_super("W", ScriptsDir .. "WallpaperPicker.sh")
+bind_exec_super("S", ScriptsDir .. "QuickSearch.sh")
+bind_exec_super("SHIFT + S", ScriptsDir .. "Screenshot.sh --area")
+bind_exec_super("C", "hyprpicker -a -n")
+bind_exec_super("N", ScriptsDir .. "Hyprsunset.sh toggle")
 
-hl.bind(
-	"CTRL + ALT + P",
-	hl.dsp.exec_cmd(ScriptsDir .. "Wlogout.sh") -- power menu (lock/logout/suspend/hibernate/shutdown/reboot)
-)
+hl.bind("CTRL + ALT + P", hl.dsp.exec_cmd(ScriptsDir .. "Wlogout.sh"))
 
 local function setZoomFactor(multiplier)
 	local factor = hl.get_config("cursor:zoom_factor")
@@ -90,18 +81,20 @@ hl.bind(Mod .. " + ALT + mouse_down", function()
 	setZoomFactor(0.5)
 end) -- magnifier: zoom out
 
+hl.config({ binds = { scroll_event_delay = 0, workspace_back_and_forth = true } })
+
 local DropTermClass = "dropterm"
 
 local DropTermSelector = "class:^" .. DropTermClass .. "$"
 local DropTermWidthPct = 0.6
 local DropTermHeightPct = 0.45
-local DropTermYOffset = 20
+local DropTermYOffset = 50
+local DropTermStash = "special:dropterm_stash"
 
 hl.window_rule({
 	name = "dropterm",
 	match = { class = "^" .. DropTermClass .. "$" },
 	float = true,
-	workspace = "special:dropterm silent",
 })
 
 hl.on("hyprland.start", function()
@@ -109,7 +102,7 @@ hl.on("hyprland.start", function()
 end)
 
 hl.on("hyprland.start", function()
-	hl.exec_cmd(ScriptsDir .. "Hyprsunset.sh auto") -- day/night temp scheduler (SUPER+N manually overrides until the next boundary)
+	hl.exec_cmd(ScriptsDir .. "Hyprsunset.sh auto")
 end)
 
 local function repositionDropTerm()
@@ -128,11 +121,20 @@ local function repositionDropTerm()
 end
 
 hl.bind(Mod .. " + SHIFT + Return", function()
-	if hl.get_window(DropTermSelector) == nil then
+	local term = hl.get_window(DropTermSelector)
+	if term == nil then
 		hl.dispatch(hl.dsp.exec_cmd(Terminal .. " --class " .. DropTermClass))
+		return
+	end
+
+	local activeWs = hl.get_active_workspace()
+	if activeWs ~= nil and term.workspace ~= nil and term.workspace.id == activeWs.id then
+		hl.dispatch(hl.dsp.window.move({ workspace = DropTermStash, follow = false, window = DropTermSelector }))
 	else
+		hl.dispatch(hl.dsp.window.move({ workspace = activeWs, window = DropTermSelector }))
+		hl.dispatch(hl.dsp.window.float({ action = "enable", window = DropTermSelector }))
 		repositionDropTerm()
-		hl.dispatch(hl.dsp.workspace.toggle_special("dropterm"))
+		hl.dispatch(hl.dsp.focus({ window = DropTermSelector }))
 	end
 end)
 
@@ -182,6 +184,39 @@ for _, d in ipairs(directions) do
 	hl.bind(Mod .. " + ALT + " .. d.vim, hl.dsp.window.swap({ direction = d.dir }))
 end
 
+local RepeatInitialDelay = 240
+local RepeatInterval = 60
+
+local function bindRepeatable(keys, dispatcher)
+	local timer = nil
+
+	local function fire()
+		hl.dispatch(dispatcher)
+	end
+
+	hl.bind(keys, function()
+		fire()
+		timer = hl.timer(function()
+			fire()
+			if timer ~= nil then
+				timer:set_timeout(RepeatInterval)
+			end
+		end, { timeout = RepeatInitialDelay, type = "repeat" })
+	end)
+
+	hl.bind(keys, function()
+		if timer ~= nil then
+			timer:set_enabled(false)
+			timer = nil
+		end
+	end, { release = true })
+end
+
+hl.bind(Mod .. " + G", hl.dsp.group.toggle())
+bindRepeatable(Mod .. " + bracketleft", hl.dsp.group.prev())
+bindRepeatable(Mod .. " + bracketright", hl.dsp.group.next())
+hl.bind(Mod .. " + SHIFT + Space", hl.dsp.window.move({ out_of_group = true }))
+
 hl.bind(Mod .. " + mouse:272", hl.dsp.window.drag(), { mouse = true })
 hl.bind(Mod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
 
@@ -194,8 +229,8 @@ end
 hl.bind(Mod .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }))
 hl.bind(Mod .. " + mouse_up", hl.dsp.focus({ workspace = "e-1" }))
 
-hl.bind(Mod .. " + comma", hl.dsp.focus({ workspace = "e-1" }))
-hl.bind(Mod .. " + period", hl.dsp.focus({ workspace = "e+1" }))
+bindRepeatable(Mod .. " + comma", hl.dsp.focus({ workspace = "e-1" }))
+bindRepeatable(Mod .. " + period", hl.dsp.focus({ workspace = "e+1" }))
 hl.bind(Mod .. " + SHIFT + comma", hl.dsp.window.move({ workspace = "-1" }))
 hl.bind(Mod .. " + SHIFT + period", hl.dsp.window.move({ workspace = "+1" }))
 
@@ -294,48 +329,6 @@ hl.config({
 		enabled = false,
 	},
 })
-
-hl.curve("easeOutQuint", { type = "bezier", points = { { 0.23, 1 }, { 0.32, 1 } } })
-
-local animatedBorderEnabled = false
-
-local function setAnimatedBorder(enabled)
-	animatedBorderEnabled = enabled
-
-	hl.config({ animations = { enabled = enabled } })
-
-	for _, leaf in ipairs({
-		"global",
-		"windows",
-		"windowsIn",
-		"windowsOut",
-		"fadeIn",
-		"fadeOut",
-		"fade",
-		"layers",
-		"layersIn",
-		"layersOut",
-		"fadeLayersIn",
-		"fadeLayersOut",
-		"workspaces",
-		"workspacesIn",
-		"workspacesOut",
-		"zoomFactor",
-	}) do
-		hl.animation({ leaf = leaf, enabled = false })
-	end
-	hl.animation({ leaf = "border", enabled = enabled, speed = 5.39, bezier = "easeOutQuint" })
-
-	hl.notification.create({
-		text = "Animated border: " .. (enabled and "on" or "off"),
-		duration = 1500,
-		icon = "info",
-	})
-end
-
-hl.bind(Mod .. " + ALT + B", function()
-	setAnimatedBorder(not animatedBorderEnabled)
-end)
 
 hl.config({
 	dwindle = {
