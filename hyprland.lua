@@ -91,9 +91,9 @@ hl.config({ binds = { scroll_event_delay = 0, workspace_back_and_forth = true } 
 local DropTermClass = "dropterm"
 
 local DropTermSelector = "class:^" .. DropTermClass .. "$"
-local DropTermWidthPct = 0.6
-local DropTermHeightPct = 0.45
-local DropTermYOffset = 0.1
+local DropTermWidthPct = 0.75
+local DropTermHeightPct = 0.5
+local DropTermYOffset = 0.05
 local DropTermStash = "special:dropterm_stash"
 
 hl.window_rule({
@@ -121,7 +121,7 @@ local function repositionDropTerm()
 	local w = math.floor((mon.width / mon.scale) * DropTermWidthPct)
 	local h = math.floor((mon.height / mon.scale) * DropTermHeightPct)
 	local x = math.floor(mon.x + ((mon.width / mon.scale) - w) / 2)
-	local y = math.floor((mon.height / mon.scale) * DropTermYOffset)
+	local y = math.floor(mon.y + ((mon.height / mon.scale) * DropTermYOffset))
 
 	hl.dispatch(hl.dsp.window.resize({ x = w, y = h, relative = false, window = DropTermSelector }))
 	hl.dispatch(hl.dsp.window.move({ x = x, y = y, relative = false, window = DropTermSelector }))
