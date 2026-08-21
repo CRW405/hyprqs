@@ -100,7 +100,7 @@ hl.window_rule({
 	name = "dropterm",
 	match = { class = "^" .. DropTermClass .. "$" },
 	float = true,
-	workspace = DropTermStash,
+	workspace = DropTermStash .. " silent",
 	size = string.format("%d%% %d%%", DropTermWidthPct * 100, DropTermHeightPct * 100),
 })
 
@@ -127,9 +127,33 @@ local function repositionDropTerm()
 	hl.dispatch(hl.dsp.window.move({ x = x, y = y, relative = false, window = DropTermSelector }))
 end
 
+local function showDropTerm()
+	local activeWs = hl.get_active_workspace()
+	if activeWs == nil then
+		return
+	end
+
+	hl.dispatch(hl.dsp.window.move({ workspace = activeWs, follow = false, window = DropTermSelector }))
+	hl.dispatch(hl.dsp.window.float({ action = "enable", window = DropTermSelector }))
+	repositionDropTerm()
+	hl.dispatch(hl.dsp.focus({ window = DropTermSelector }))
+end
+
+local dropTermOpenSub = nil
+
 hl.bind(Mod .. " + SHIFT + Return", function()
 	local term = hl.get_window(DropTermSelector)
 	if term == nil then
+		if dropTermOpenSub == nil then
+			dropTermOpenSub = hl.on("window.open", function(win)
+				if win == nil or win.class ~= DropTermClass then
+					return
+				end
+				dropTermOpenSub:remove()
+				dropTermOpenSub = nil
+				showDropTerm()
+			end)
+		end
 		hl.dispatch(hl.dsp.exec_cmd(Terminal .. " --class " .. DropTermClass))
 		return
 	end
@@ -138,10 +162,7 @@ hl.bind(Mod .. " + SHIFT + Return", function()
 	if activeWs ~= nil and term.workspace ~= nil and term.workspace.id == activeWs.id then
 		hl.dispatch(hl.dsp.window.move({ workspace = DropTermStash, follow = false, window = DropTermSelector }))
 	else
-		hl.dispatch(hl.dsp.window.move({ workspace = activeWs, window = DropTermSelector }))
-		hl.dispatch(hl.dsp.window.float({ action = "enable", window = DropTermSelector }))
-		repositionDropTerm()
-		hl.dispatch(hl.dsp.focus({ window = DropTermSelector }))
+		showDropTerm()
 	end
 end)
 
