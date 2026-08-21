@@ -1,11 +1,20 @@
 import QtQuick
 import "../common"
 
-ThresholdText {
+SlotText {
     id: root
     property string label: ""
     property string append: ""
+    property int value: 0
+    property int warningThreshold: 80
 
-    warningThreshold: 80
-    text: label + value + append
+    widthSamples: [label + "100" + append]
+    content: labelText
+
+    ThresholdText {
+        id: labelText
+        value: root.value
+        warningThreshold: root.warningThreshold
+        text: root.label + root.value + root.append
+    }
 }

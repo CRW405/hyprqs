@@ -1,7 +1,7 @@
 import QtQuick
 import "../common"
 
-StyledText {
+SlotText {
     id: root
     property string status: "Unknown"
     property int timeToFullSec: 0
@@ -24,16 +24,22 @@ StyledText {
         return "Battery"
     }
 
-    text: {
-        if (!root.hasBattery) return ""
-        var label = root.baseLabel()
-        if (root.showEstimate && root.status === "Charging") {
-            var eta = root.formatTime(root.timeToFullSec)
-            if (eta) label += " " + eta
-        }
-        return label
-    }
+    widthSamples: ["Charging 23h 59m", "Discharging", "Full", "Battery"]
     visible: root.hasBattery
+    content: labelText
+
+    StyledText {
+        id: labelText
+        text: {
+            if (!root.hasBattery) return ""
+            var label = root.baseLabel()
+            if (root.showEstimate && root.status === "Charging") {
+                var eta = root.formatTime(root.timeToFullSec)
+                if (eta) label += " " + eta
+            }
+            return label
+        }
+    }
 
     MouseArea {
         anchors.fill: parent

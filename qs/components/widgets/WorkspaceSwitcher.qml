@@ -233,6 +233,7 @@ RowLayout {
                     text: workspaceItem.workspaceId
                     textColor: workspaceItem.isActive ? root.activeColor : root.textColor
                     fontSize: root.fontSize
+                    anchors.verticalCenter: parent.verticalCenter
                 }
 
                 Repeater {
@@ -241,6 +242,7 @@ RowLayout {
                     Item {
                         width: root.iconSize
                         height: root.iconSize
+                        anchors.verticalCenter: parent.verticalCenter
 
                         IconImage {
                             anchors.fill: parent

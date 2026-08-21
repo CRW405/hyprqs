@@ -1,14 +1,20 @@
 import QtQuick
 import "../common"
 
-ThresholdText {
+SlotText {
     id: root
     property string usedStorage: ""
     property string totalStorage: ""
     property int percentage: 0
     property string label: ""
 
-    value: percentage
-    warningThreshold: 90
-    text: (usedStorage && totalStorage) ? label + usedStorage + "/" + totalStorage + " (" + percentage + "%)" : label + percentage + "%"
+    widthSamples: [(usedStorage && totalStorage) ? (label + totalStorage + "/" + totalStorage + " (100%)") : (label + "100%")]
+    content: labelText
+
+    ThresholdText {
+        id: labelText
+        value: root.percentage
+        warningThreshold: 90
+        text: (root.usedStorage && root.totalStorage) ? root.label + root.usedStorage + "/" + root.totalStorage + " (" + root.percentage + "%)" : root.label + root.percentage + "%"
+    }
 }

@@ -1,8 +1,8 @@
 import QtQuick
 import "../common"
 
-ThresholdText {
-    id: tempLabel
+SlotText {
+    id: root
     property string label: ""
     property int tempC: 0
     property int tempF: 0
@@ -10,12 +10,18 @@ ThresholdText {
     property int warningThresholdC: 80
     signal clicked()
 
-    value: tempC
-    warningThreshold: warningThresholdC
-    text: label + (showFahrenheit ? tempF : tempC) + "°" + (showFahrenheit ? "F" : "C")
+    widthSamples: [label + "100°F", label + "-100°C"]
+    content: labelText
+
+    ThresholdText {
+        id: labelText
+        value: root.tempC
+        warningThreshold: root.warningThresholdC
+        text: root.label + (root.showFahrenheit ? root.tempF : root.tempC) + "°" + (root.showFahrenheit ? "F" : "C")
+    }
 
     MouseArea {
         anchors.fill: parent
-        onClicked: tempLabel.clicked()
+        onClicked: root.clicked()
     }
 }

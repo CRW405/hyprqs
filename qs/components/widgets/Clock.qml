@@ -2,28 +2,32 @@ import QtQuick
 import "../common"
 
 StyledText {
-    id: clock
+    id: root
 
     property bool showDetailed: true
+    property bool hovered: false
 
     function updateText() {
         var now = new Date();
-        if (clock.showDetailed) {
+        if (root.showDetailed) {
             var day = Qt.formatDateTime(now, "dddd");
-            clock.text = day + " - " + Qt.formatDateTime(now, "hh:mm:ss A - MM/dd/yyyy");
+            root.text = day + " - " + Qt.formatDateTime(now, "hh:mm:ss A - MM/dd/yyyy");
         } else {
-            clock.text = Qt.formatDateTime(now, "hh:mm A");
+            root.text = Qt.formatDateTime(now, "hh:mm A");
         }
     }
 
     text: ""
-    Component.onCompleted: clock.updateText()
+    Component.onCompleted: root.updateText()
 
     MouseArea {
         anchors.fill: parent
+        hoverEnabled: true
+        onEntered: root.hovered = true
+        onExited: root.hovered = false
         onClicked: {
-            clock.showDetailed = !clock.showDetailed;
-            clock.updateText();
+            root.showDetailed = !root.showDetailed;
+            root.updateText();
         }
     }
 
@@ -31,7 +35,7 @@ StyledText {
         interval: 1000
         running: true
         repeat: true
-        onTriggered: clock.updateText()
+        onTriggered: root.updateText()
     }
 
 }
