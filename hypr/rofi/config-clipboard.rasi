@@ -1,0 +1,93 @@
+configuration {
+  show-icons: true;
+}
+
+@import "colors.rasi"
+
+window {
+  width: 40%;
+  height: 50%;
+  location: center;
+  border: 2px;
+  border-color: @border-color;
+  border-radius: @radius;
+  background-color: @background-color;
+}
+
+mainbox {
+  children: [ "inputbar", "message", "listview" ];
+  padding: @padding;
+  spacing: 10px;
+  background-color: transparent;
+}
+
+inputbar {
+  children: [ "prompt", "entry" ];
+  background-color: @background-alt;
+  border-radius: @radius;
+  padding: @padding;
+  spacing: 10px;
+}
+
+prompt {
+  enabled: true;
+  text-color: @foreground;
+}
+
+entry {
+  expand: true;
+  placeholder: "Search clipboard…";
+  placeholder-color: @foreground;
+  text-color: @foreground;
+  background-color: transparent;
+}
+
+message {
+  background-color: @background-alt;
+  border-radius: @radius;
+  padding: @padding;
+}
+
+textbox {
+  text-color: @text-secondary;
+}
+
+listview {
+  columns: 1;
+  lines: 8;
+  cycle: true;
+  spacing: 4px;
+  padding: 0px;
+  background-color: transparent;
+  scrollbar: false;
+}
+
+element {
+  padding: 8px;
+  spacing: 10px;
+  border-radius: @radius;
+  cursor: pointer;
+}
+
+element normal.normal,
+element alternate.normal {
+  background-color: @background-alt;
+  text-color: @foreground;
+}
+
+element-text selected,
+element selected.normal {
+  background-color: @selected;
+  text-color: @primary;
+}
+
+element-icon {
+  size: 48px;
+  cursor: inherit;
+}
+
+element-text {
+  text-color: @foreground;
+  vertical-align: 0.5;
+  cursor: inherit;
+}

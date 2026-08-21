@@ -9,6 +9,11 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 if pidof rofi >/dev/null 2>&1; then
   pkill rofi
+  for _ in 1 2 3 4 5; do
+    pidof rofi >/dev/null 2>&1 || break
+    sleep 0.1
+  done
+  pidof rofi >/dev/null 2>&1 && pkill -9 rofi
   exit 0
 fi
 

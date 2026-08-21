@@ -23,6 +23,8 @@ REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 STYLE_JSON="$REPO_DIR/style/style.json"
 OUT="$REPO_DIR/hypr/rofi/colors.rasi"
 
+TMP="$OUT.tmp"
+
 jq -r '
   .color as $c |
   ($c | to_entries | map("  \(.key | gsub("_"; "-")): #\(.value);") | join("\n")) as $rawColors |
@@ -51,4 +53,6 @@ jq -r '
   "     mechanism as the color aliases above) */\n" +
   "  font: \"" + .font.family + " " + (.font.size | tostring) + "\";\n" +
   "}"
-' "$STYLE_JSON" >"$OUT"
+' "$STYLE_JSON" >"$TMP"
+
+mv "$TMP" "$OUT"
