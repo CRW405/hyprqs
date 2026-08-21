@@ -69,9 +69,6 @@ bind_exec_super("ALT + V", ScriptsDir .. "ClipManager.sh")
 
 hl.bind("CTRL + ALT + P", hl.dsp.exec_cmd(ScriptsDir .. "Wlogout.sh"))
 
--- Panic button: force-kill a wedged rofi (e.g. a bad theme/script hanging it
--- while it holds keyboard focus) without needing a full Hyprland restart.
--- locked = true so it still fires if an input inhibitor is active.
 hl.bind("CTRL + ALT + Escape", hl.dsp.exec_cmd("pkill -9 rofi"), { locked = true })
 
 local function setZoomFactor(multiplier)
@@ -96,7 +93,7 @@ local DropTermClass = "dropterm"
 local DropTermSelector = "class:^" .. DropTermClass .. "$"
 local DropTermWidthPct = 0.6
 local DropTermHeightPct = 0.45
-local DropTermYOffset = 50
+local DropTermYOffset = 0.1
 local DropTermStash = "special:dropterm_stash"
 
 hl.window_rule({
@@ -124,7 +121,7 @@ local function repositionDropTerm()
 	local w = math.floor((mon.width / mon.scale) * DropTermWidthPct)
 	local h = math.floor((mon.height / mon.scale) * DropTermHeightPct)
 	local x = math.floor(mon.x + ((mon.width / mon.scale) - w) / 2)
-	local y = mon.y + DropTermYOffset
+	local y = math.floor((mon.height / mon.scale) * DropTermYOffset)
 
 	hl.dispatch(hl.dsp.window.resize({ x = w, y = h, relative = false, window = DropTermSelector }))
 	hl.dispatch(hl.dsp.window.move({ x = x, y = y, relative = false, window = DropTermSelector }))
