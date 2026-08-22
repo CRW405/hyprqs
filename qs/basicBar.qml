@@ -63,8 +63,6 @@ ShellRoot {
                 required property var modelData
 
                 PanelWindow {
-                    id: barWindow
-
                     // TODO:
                     // Notifications
                     // System Tray
@@ -81,6 +79,8 @@ ShellRoot {
                     // Commentede code catcher:
                     // anchors.fill: parent
                     // spacing: gap
+
+                    id: barWindow
 
                     property bool showCpuFahrenheit: false
                     property bool showGpuFahrenheit: false
@@ -245,14 +245,14 @@ ShellRoot {
                     anchors.right: true
                     exclusionMode: ExclusionMode.Ignore
                     color: "transparent"
-                    visible: clock.hovered
-                    implicitHeight: calendarPopup.implicitHeight + Theme.Theme.gap * 4
+                    visible: clock.hovered || calendarPopup.hovered
+                    implicitHeight: calendarPopup.implicitHeight
                     margins.top: Theme.Theme.barHeight
 
                     CalendarPopup {
                         id: calendarPopup
+
                         anchors.horizontalCenter: parent.horizontalCenter
-                        y: Theme.Theme.gap * 2
                     }
 
                 }
