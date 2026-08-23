@@ -4,10 +4,7 @@ import Quickshell.Services.Mpris
 import "../common"
 import "../../theme" as Theme
 
-// Display-only: title/artist for the active Mpris player. Playback controls
-// live in MediaControls.qml (shared with CavaBars' playerctl-based
-// MouseArea) rather than here, so there's a single control surface instead
-// of two competing ones.
+// Controls live in MediaControls.qml, not here.
 RowLayout {
     id: root
 

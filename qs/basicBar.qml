@@ -274,9 +274,16 @@ ShellRoot {
                     anchors.right: true
                     exclusionMode: ExclusionMode.Ignore
                     color: "transparent"
-                    visible: clock.hovered || calendarPopup.hovered
+                    property bool hoverActive: clock.hovered || calendarPopup.hovered
+                    visible: hoverActive || calendarCloseTimer.running
                     implicitHeight: calendarPopup.implicitHeight
                     margins.top: Theme.Theme.barHeight
+                    onHoverActiveChanged: hoverActive ? calendarCloseTimer.stop() : calendarCloseTimer.start()
+
+                    Timer {
+                        id: calendarCloseTimer
+                        interval: 300
+                    }
 
                     CalendarPopup {
                         id: calendarPopup
@@ -295,16 +302,50 @@ ShellRoot {
                     anchors.right: true
                     exclusionMode: ExclusionMode.Ignore
                     color: "transparent"
-                    visible: notificationIndicator.hovered || notificationPopup.hovered
+                    property bool hoverActive: notificationIndicator.hovered || notificationPopup.hovered
+                    visible: hoverActive || notificationCloseTimer.running
                     implicitHeight: notificationPopup.implicitHeight
                     margins.top: Theme.Theme.barHeight
+                    onHoverActiveChanged: hoverActive ? notificationCloseTimer.stop() : notificationCloseTimer.start()
+
+                    Timer {
+                        id: notificationCloseTimer
+                        interval: 300
+                    }
 
                     NotificationPopup {
                         id: notificationPopup
 
-                        notificationServer: notificationServer
+                        notifServer: notificationServer
                         anchors.right: parent.right
                         anchors.rightMargin: Theme.Theme.gap
+                    }
+
+                }
+
+                PanelWindow {
+                    id: toastWindow
+
+                    screen: screenScope.modelData
+                    anchors.top: true
+                    anchors.right: true
+                    exclusionMode: ExclusionMode.Ignore
+                    color: "transparent"
+                    visible: toastStack.count > 0
+                    implicitWidth: 320
+                    implicitHeight: toastStack.implicitHeight
+                    margins.top: Theme.Theme.barHeight + Theme.Theme.gap
+                    margins.right: Theme.Theme.gap
+
+                    Connections {
+                        target: notificationServer
+                        function onNotification(notification) {
+                            toastStack.show(notification);
+                        }
+                    }
+
+                    NotificationToastStack {
+                        id: toastStack
                     }
 
                 }

@@ -25,11 +25,7 @@ RowLayout {
 
             IconImage {
                 anchors.fill: parent
-                // modelData.icon is already a fully-resolved SNI icon
-                // source (sometimes with an embedded ?path= icon-theme
-                // search path) - don't re-resolve it through
-                // Quickshell.iconPath(), which is for plain icon-theme
-                // names and mangles the already-resolved string.
+                // don't wrap in Quickshell.iconPath() - modelData.icon is already resolved
                 source: trayIcon.modelData.icon
                 asynchronous: true
             }

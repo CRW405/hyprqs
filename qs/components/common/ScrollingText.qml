@@ -2,10 +2,6 @@ import QtQuick
 import QtQuick.Layouts
 import "../../theme" as Theme
 
-// Fixed-width marquee: reserves `maxWidth` and scrolls `text` back and forth
-// when it doesn't fit, pausing at each end. Static (no animation) when the
-// text fits within maxWidth - mirrors SlotText's "reserve space" philosophy,
-// but for content that can be wider than its box rather than narrower.
 Item {
     id: root
 

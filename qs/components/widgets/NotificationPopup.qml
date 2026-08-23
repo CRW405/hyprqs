@@ -6,10 +6,10 @@ import "../../theme" as Theme
 Rectangle {
     id: root
 
-    property var notificationServer: null
+    property var notifServer: null
     readonly property bool hovered: hoverHandler.hovered
     readonly property int popupPadding: Theme.Theme.gap * 3
-    readonly property int count: notificationServer ? notificationServer.trackedNotifications.values.length : 0
+    readonly property int count: notifServer ? notifServer.trackedNotifications.values.length : 0
 
     color: Theme.Theme.bg
     border.color: Theme.Theme.muted
@@ -17,8 +17,6 @@ Rectangle {
     implicitWidth: 320
     implicitHeight: Math.min(400, list.implicitHeight + popupPadding * 2)
 
-    // HoverHandler (not a hoverEnabled MouseArea) so hover tracking doesn't
-    // compete with each notification's own dismiss-button MouseArea for hit-testing.
     HoverHandler {
         id: hoverHandler
     }
@@ -36,7 +34,7 @@ Rectangle {
         }
 
         Repeater {
-            model: root.notificationServer ? root.notificationServer.trackedNotifications : null
+            model: root.notifServer ? root.notifServer.trackedNotifications : null
 
             delegate: RowLayout {
                 id: notifRow
