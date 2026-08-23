@@ -2,7 +2,6 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell.Io
 import "../common"
-import "../icons"
 import "../../theme" as Theme
 
 RowLayout {
@@ -12,7 +11,6 @@ RowLayout {
     property color textColor: Theme.Theme.fg
     property color mutedColor: Theme.Theme.muted
     property int fontSize: Theme.Theme.fontSize
-    property int iconSize: Theme.Theme.iconSize
 
     spacing: Theme.Theme.gap
 
@@ -20,19 +18,13 @@ RowLayout {
         id: wpctlProc
     }
 
-    VolumeIcon {
-        muted: root.muted
-        color: root.muted ? root.mutedColor : root.textColor
-        iconSize: root.iconSize
-    }
-
     SlotText {
-        widthSamples: ["100%", "Muted"]
+        widthSamples: ["V: 100%", "V: Muted"]
         content: volumeText
 
         StyledText {
             id: volumeText
-            text: root.muted ? "Muted" : Math.round(root.volume * 100) + "%"
+            text: root.muted ? "V: Muted" : "V: " + Math.round(root.volume * 100) + "%"
             textColor: root.muted ? root.mutedColor : root.textColor
             fontSize: root.fontSize
         }

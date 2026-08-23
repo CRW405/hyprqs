@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
+import Quickshell.Services.Notifications
 import "pollers"
 import "components/widgets"
 import "components/labels"
@@ -53,6 +54,19 @@ ShellRoot {
         id: nightLightPoller
     }
 
+    NotificationServer {
+        id: notificationServer
+
+        keepOnReload: true
+        bodySupported: true
+        bodyMarkupSupported: true
+        imageSupported: true
+        actionsSupported: true
+        onNotification: (notification) => {
+            return notification.tracked = true;
+        }
+    }
+
     Variants {
         model: Quickshell.screens
 
@@ -64,8 +78,7 @@ ShellRoot {
 
                 PanelWindow {
                     // TODO:
-                    // Notifications
-                    // System Tray
+                    // Figure out what to do about not enough space
                     // Dashboard dropdown:
                     //      Notifications
                     //      picture thing
@@ -76,7 +89,7 @@ ShellRoot {
                     //          Wifi
                     //          Power / logout options
                     // ---
-                    // Commentede code catcher:
+                    // Commented code catcher:
                     // anchors.fill: parent
                     // spacing: gap
 
@@ -106,7 +119,7 @@ ShellRoot {
                         Seperator {
                         }
 
-                        CavaBars {
+                        MediaControls {
                         }
 
                     }
@@ -138,6 +151,13 @@ ShellRoot {
                         anchors.verticalCenter: parent.verticalCenter
                         spacing: Theme.Theme.gap
 
+                        SystemTrayWidget {
+                            screen: screenScope.modelData
+                        }
+
+                        Seperator {
+                        }
+
                         UsageLabel {
                             label: "C: "
                             value: cpuPoller.cpuUsage
@@ -149,15 +169,6 @@ ShellRoot {
                             tempF: cpuTempPoller.tempF
                             showFahrenheit: barWindow.showCpuFahrenheit
                             onClicked: barWindow.showCpuFahrenheit = !barWindow.showCpuFahrenheit
-                        }
-
-                        Seperator {
-                        }
-
-                        UsageLabel {
-                            label: "M: "
-                            value: memPoller.memUsage
-                            append: "%"
                         }
 
                         Seperator {
@@ -179,6 +190,15 @@ ShellRoot {
                             usedStorage: storagePoller.usedStorage
                             totalStorage: storagePoller.totalStorage
                             percentage: storagePoller.percentage
+                        }
+
+                        Seperator {
+                        }
+
+                        UsageLabel {
+                            label: "M: "
+                            value: memPoller.memUsage
+                            append: "%"
                         }
 
                         Seperator {
@@ -232,6 +252,15 @@ ShellRoot {
                             onToggleRequested: idleInhibitorPoller.toggle()
                         }
 
+                        Seperator {
+                        }
+
+                        NotificationIndicator {
+                            id: notificationIndicator
+
+                            unreadCount: notificationServer.trackedNotifications.values.length
+                        }
+
                     }
 
                 }
@@ -253,6 +282,29 @@ ShellRoot {
                         id: calendarPopup
 
                         anchors.horizontalCenter: parent.horizontalCenter
+                    }
+
+                }
+
+                PanelWindow {
+                    id: notificationWindow
+
+                    screen: screenScope.modelData
+                    anchors.top: true
+                    anchors.left: true
+                    anchors.right: true
+                    exclusionMode: ExclusionMode.Ignore
+                    color: "transparent"
+                    visible: notificationIndicator.hovered || notificationPopup.hovered
+                    implicitHeight: notificationPopup.implicitHeight
+                    margins.top: Theme.Theme.barHeight
+
+                    NotificationPopup {
+                        id: notificationPopup
+
+                        notificationServer: notificationServer
+                        anchors.right: parent.right
+                        anchors.rightMargin: Theme.Theme.gap
                     }
 
                 }

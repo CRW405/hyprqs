@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
 import "../common"
-import "../icons"
 import "../../theme" as Theme
 
 RowLayout {
@@ -10,16 +9,9 @@ RowLayout {
     property color textColor: Theme.Theme.fg
     property color activeColor: Theme.Theme.accent
     property int fontSize: Theme.Theme.fontSize
-    property int iconSize: Theme.Theme.iconSize
     signal toggleRequested()
 
     spacing: Theme.Theme.gap
-
-    NightLightIcon {
-        active: root.nightLightEnabled
-        color: root.nightLightEnabled ? root.activeColor : root.textColor
-        iconSize: root.iconSize
-    }
 
     SlotText {
         widthSamples: ["Night", "Day"]
