@@ -20,8 +20,8 @@ hl.monitor({
 -- -- TODO:
 -- Grouping, ignore this one for now, llm
 
--- require("monitors") -- display setting generated config
--- require("workspaces") -- display setting generated config
+require("monitors") -- display setting generated config
+require("workspaces") -- display setting generated config
 
 -- Loaded via dofile (not require()) because Hyprland's built-in Lua
 -- require() shim doesn't reliably propagate a file's return value (it's
