@@ -186,7 +186,7 @@ ShellRoot {
                             anchors.rightMargin: Theme.Theme.gap
                             anchors.top: parent.top
                             anchors.bottom: parent.bottom
-                            contentWidth: scrollContent.implicitWidth
+                            contentWidth: Math.max(scrollContent.implicitWidth, width)
                             contentHeight: height
                             clip: true
                             boundsBehavior: Flickable.StopAtBounds
@@ -203,6 +203,7 @@ ShellRoot {
                             RowLayout {
                                 id: scrollContent
 
+                                anchors.right: parent.right
                                 anchors.verticalCenter: parent.verticalCenter
                                 spacing: Theme.Theme.gap
 
