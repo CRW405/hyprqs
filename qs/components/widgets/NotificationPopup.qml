@@ -23,6 +23,7 @@ Rectangle {
 
     ColumnLayout {
         id: list
+
         anchors.fill: parent
         anchors.margins: root.popupPadding
         spacing: Theme.Theme.gap
@@ -38,10 +39,17 @@ Rectangle {
 
             delegate: RowLayout {
                 id: notifRow
+
                 required property var modelData
 
                 Layout.fillWidth: true
                 spacing: Theme.Theme.gap
+
+                MouseArea {
+                    anchors.fill: parent
+                    acceptedButtons: Qt.MiddleButton
+                    onClicked: notifRow.modelData.dismiss()
+                }
 
                 ColumnLayout {
                     Layout.fillWidth: true
@@ -59,6 +67,7 @@ Rectangle {
                         textColor: Theme.Theme.muted
                         wrapMode: Text.WordWrap
                     }
+
                 }
 
                 StyledText {
@@ -69,8 +78,13 @@ Rectangle {
                         anchors.fill: parent
                         onClicked: notifRow.modelData.dismiss()
                     }
+
                 }
+
             }
+
         }
+
     }
+
 }

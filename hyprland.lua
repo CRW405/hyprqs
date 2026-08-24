@@ -20,8 +20,8 @@ hl.monitor({
 require("monitors")
 require("workspaces")
 
--- require("monitors") -- display setting generated config
--- require("workspaces") -- display setting generated config
+require("monitors") -- display setting generated config
+require("workspaces") -- display setting generated config
 
 -- ============================================================
 -- Style
@@ -141,7 +141,8 @@ bind_exec_super("W", ScriptsDir .. "WallpaperPicker.sh")
 bind_exec_super("S", ScriptsDir .. "QuickSearch.sh")
 bind_exec_super("SHIFT + S", ScriptsDir .. "Screenshot.sh --area")
 bind_exec_super("C", "hyprpicker -a -n")
-bind_exec_super("N", ScriptsDir .. "Hyprsunset.sh toggle")
+bind_exec_super("N", "obsidian")
+bind_exec_super("ALT + N", ScriptsDir .. "Hyprsunset.sh toggle")
 bind_exec_super("ALT + V", ScriptsDir .. "ClipManager.sh")
 
 hl.bind("CTRL + ALT + P", hl.dsp.exec_cmd(ScriptsDir .. "Wlogout.sh"))
@@ -355,6 +356,10 @@ hl.bind("XF86AudioNext", hl.dsp.exec_cmd("playerctl next"), { locked = true })
 hl.bind("XF86AudioPause", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
 hl.bind("XF86AudioPlay", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
 hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"), { locked = true })
+
+hl.bind(Mod .. " + bracketright", hl.dsp.exec_cmd("playerctl next"))
+hl.bind(Mod .. " + bracketleft", hl.dsp.exec_cmd("playerctl previous"))
+hl.bind(Mod .. " + P", hl.dsp.exec_cmd("playerctl play-pause"))
 
 -- ============================================================
 -- Window Rules
