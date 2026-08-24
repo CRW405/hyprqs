@@ -119,6 +119,13 @@ ShellRoot {
                         Seperator {
                         }
 
+                        SystemTrayWidget {
+                            screen: screenScope.modelData
+                        }
+
+                        Seperator {
+                        }
+
                         MediaControls {
                         }
 
@@ -143,122 +150,158 @@ ShellRoot {
 
                     }
 
-                    RowLayout {
+                    Item {
                         id: rightSection
 
+                        anchors.left: middleSection.right
                         anchors.right: parent.right
                         anchors.rightMargin: Theme.Theme.gap
-                        anchors.verticalCenter: parent.verticalCenter
-                        spacing: Theme.Theme.gap
+                        anchors.top: parent.top
+                        anchors.bottom: parent.bottom
+                        clip: true
 
-                        SystemTrayWidget {
-                            screen: screenScope.modelData
+                        RowLayout {
+                            id: pinnedRow
+
+                            anchors.right: parent.right
+                            anchors.verticalCenter: parent.verticalCenter
+                            spacing: Theme.Theme.gap
+
+                            Seperator {
+                            }
+
+                            NotificationIndicator {
+                                id: notificationIndicator
+
+                                unreadCount: notificationServer.trackedNotifications.values.length
+                            }
+
                         }
 
-                        Seperator {
-                        }
+                        Flickable {
+                            id: rightScrollArea
 
-                        UsageLabel {
-                            label: "C: "
-                            value: cpuPoller.cpuUsage
-                            append: "%"
-                        }
+                            anchors.left: parent.left
+                            anchors.right: pinnedRow.left
+                            anchors.rightMargin: Theme.Theme.gap
+                            anchors.top: parent.top
+                            anchors.bottom: parent.bottom
+                            contentWidth: scrollContent.implicitWidth
+                            contentHeight: height
+                            clip: true
+                            boundsBehavior: Flickable.StopAtBounds
+                            flickableDirection: Flickable.HorizontalFlick
 
-                        TempToggleLabel {
-                            tempC: cpuTempPoller.tempC
-                            tempF: cpuTempPoller.tempF
-                            showFahrenheit: barWindow.showCpuFahrenheit
-                            onClicked: barWindow.showCpuFahrenheit = !barWindow.showCpuFahrenheit
-                        }
+                            WheelHandler {
+                                acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+                                onWheel: (event) => {
+                                    const delta = event.angleDelta.y !== 0 ? event.angleDelta.y : event.angleDelta.x;
+                                    rightScrollArea.contentX = Math.max(0, Math.min(rightScrollArea.contentWidth - rightScrollArea.width, rightScrollArea.contentX - delta));
+                                }
+                            }
 
-                        Seperator {
-                        }
+                            RowLayout {
+                                id: scrollContent
 
-                        TempToggleLabel {
-                            label: "G: "
-                            tempC: gpuTempPoller.tempC
-                            tempF: gpuTempPoller.tempF
-                            showFahrenheit: barWindow.showGpuFahrenheit
-                            onClicked: barWindow.showGpuFahrenheit = !barWindow.showGpuFahrenheit
-                        }
+                                anchors.verticalCenter: parent.verticalCenter
+                                spacing: Theme.Theme.gap
 
-                        Seperator {
-                        }
+                                UsageLabel {
+                                    label: "C: "
+                                    value: cpuPoller.cpuUsage
+                                    append: "%"
+                                }
 
-                        DiskUsageLabel {
-                            label: "D: "
-                            usedStorage: storagePoller.usedStorage
-                            totalStorage: storagePoller.totalStorage
-                            percentage: storagePoller.percentage
-                        }
+                                TempToggleLabel {
+                                    tempC: cpuTempPoller.tempC
+                                    tempF: cpuTempPoller.tempF
+                                    showFahrenheit: barWindow.showCpuFahrenheit
+                                    onClicked: barWindow.showCpuFahrenheit = !barWindow.showCpuFahrenheit
+                                }
 
-                        Seperator {
-                        }
+                                Seperator {
+                                }
 
-                        UsageLabel {
-                            label: "M: "
-                            value: memPoller.memUsage
-                            append: "%"
-                        }
+                                TempToggleLabel {
+                                    label: "G: "
+                                    tempC: gpuTempPoller.tempC
+                                    tempF: gpuTempPoller.tempF
+                                    showFahrenheit: barWindow.showGpuFahrenheit
+                                    onClicked: barWindow.showGpuFahrenheit = !barWindow.showGpuFahrenheit
+                                }
 
-                        Seperator {
-                        }
+                                Seperator {
+                                }
 
-                        VolumeWidget {
-                            volume: volumePoller.volume
-                            muted: volumePoller.muted
-                        }
+                                DiskUsageLabel {
+                                    label: "D: "
+                                    usedStorage: storagePoller.usedStorage
+                                    totalStorage: storagePoller.totalStorage
+                                    percentage: storagePoller.percentage
+                                }
 
-                        Seperator {
-                        }
+                                Seperator {
+                                }
 
-                        NightLightButton {
-                            nightLightEnabled: nightLightPoller.nightLightEnabled
-                            onToggleRequested: nightLightPoller.toggle()
-                        }
+                                UsageLabel {
+                                    label: "M: "
+                                    value: memPoller.memUsage
+                                    append: "%"
+                                }
 
-                        Seperator {
-                            visible: batteryPoller.hasBattery
-                        }
+                                Seperator {
+                                }
 
-                        BatteryWidget {
-                            percentage: batteryPoller.percentage
-                            charging: batteryPoller.isCharging
-                            visible: batteryPoller.hasBattery
-                        }
+                                VolumeWidget {
+                                    volume: volumePoller.volume
+                                    muted: volumePoller.muted
+                                }
 
-                        BatteryStatusLabel {
-                            status: batteryStatusPoller.status
-                            timeToFullSec: batteryStatusPoller.timeToFullSec
-                            hasBattery: batteryStatusPoller.hasBattery
-                            visible: batteryStatusPoller.hasBattery
-                        }
+                                Seperator {
+                                }
 
-                        Seperator {
-                            visible: batteryPoller.hasBattery
-                        }
+                                NightLightButton {
+                                    nightLightEnabled: nightLightPoller.nightLightEnabled
+                                    onToggleRequested: nightLightPoller.toggle()
+                                }
 
-                        PowerProfileButton {
-                            profile: powerProfilePoller.profile
-                            availableProfiles: powerProfilePoller.availableProfiles
-                            visible: batteryPoller.hasBattery && powerProfilePoller.availableProfiles.length > 0
-                        }
+                                Seperator {
+                                    visible: batteryPoller.hasBattery
+                                }
 
-                        Seperator {
-                        }
+                                BatteryWidget {
+                                    percentage: batteryPoller.percentage
+                                    charging: batteryPoller.isCharging
+                                    visible: batteryPoller.hasBattery
+                                }
 
-                        IdleInhibitorButton {
-                            inhibitEnabled: idleInhibitorPoller.inhibitEnabled
-                            onToggleRequested: idleInhibitorPoller.toggle()
-                        }
+                                BatteryStatusLabel {
+                                    status: batteryStatusPoller.status
+                                    timeToFullSec: batteryStatusPoller.timeToFullSec
+                                    hasBattery: batteryStatusPoller.hasBattery
+                                    visible: batteryStatusPoller.hasBattery
+                                }
 
-                        Seperator {
-                        }
+                                Seperator {
+                                    visible: batteryPoller.hasBattery
+                                }
 
-                        NotificationIndicator {
-                            id: notificationIndicator
+                                PowerProfileButton {
+                                    profile: powerProfilePoller.profile
+                                    availableProfiles: powerProfilePoller.availableProfiles
+                                    visible: batteryPoller.hasBattery && powerProfilePoller.availableProfiles.length > 0
+                                }
 
-                            unreadCount: notificationServer.trackedNotifications.values.length
+                                Seperator {
+                                }
+
+                                IdleInhibitorButton {
+                                    inhibitEnabled: idleInhibitorPoller.inhibitEnabled
+                                    onToggleRequested: idleInhibitorPoller.toggle()
+                                }
+
+                            }
+
                         }
 
                     }
