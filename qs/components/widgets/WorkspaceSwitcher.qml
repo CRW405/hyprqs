@@ -13,7 +13,7 @@ import "../../theme" as Theme
 // 1) Build an index of real icon files from disk (icon name -> file path).
 // 2) Poll Hyprland clients as JSON.
 // 3) For each window, find its workspace + matching icon path.
-// 4) Render all icons for each workspace (including duplicates per window).
+// 4) Render one icon per unique app per workspace (duplicates collapsed).
 RowLayout {
     id: root
     property int fontSize: Theme.Theme.fontSize
@@ -109,8 +109,8 @@ RowLayout {
     // Parse hyprctl clients JSON and rebuild workspaceIcons from scratch.
     //
     // Important behavior:
-    // We DO NOT dedupe icons here. One window = one icon entry.
-    // That means 5 LibreWolf windows render as 5 LibreWolf icons.
+    // We dedupe icons per workspace. Multiple windows of the same app show
+    // one icon. That means 5 LibreWolf windows render as 1 LibreWolf icon.
     function refreshWorkspaceIcons(rawData) {
         if (!rawData) return
 
@@ -132,7 +132,8 @@ RowLayout {
             var icon = iconForClient(client)
             if (!icon) continue
 
-            nextIcons[workspaceId].push(icon)
+            if (nextIcons[workspaceId].indexOf(icon) === -1)
+                nextIcons[workspaceId].push(icon)
         }
 
         root.workspaceIcons = nextIcons
@@ -233,6 +234,7 @@ RowLayout {
                     text: workspaceItem.workspaceId
                     textColor: workspaceItem.isActive ? root.activeColor : root.textColor
                     fontSize: root.fontSize
+                    anchors.verticalCenter: parent.verticalCenter
                 }
 
                 Repeater {
@@ -241,6 +243,7 @@ RowLayout {
                     Item {
                         width: root.iconSize
                         height: root.iconSize
+                        anchors.verticalCenter: parent.verticalCenter
 
                         IconImage {
                             anchors.fill: parent

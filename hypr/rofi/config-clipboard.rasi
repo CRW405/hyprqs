@@ -1,18 +1,12 @@
 configuration {
-  modi: "drun,run,window";
   show-icons: true;
-  display-drun: "Apps";
-  display-run: "Run";
-  display-filebrowser: "Files";
-  display-window: "Windows";
-  drun-display-format: "{name}";
 }
 
 @import "colors.rasi"
 
 window {
   width: 40%;
-  height: 55%;
+  height: 50%;
   location: center;
   border: 2px;
   border-color: @border-color;
@@ -21,7 +15,7 @@ window {
 }
 
 mainbox {
-  children: [ "inputbar", "mode-switcher", "listview" ];
+  children: [ "inputbar", "message", "listview" ];
   padding: @padding;
   spacing: 10px;
   background-color: transparent;
@@ -42,28 +36,20 @@ prompt {
 
 entry {
   expand: true;
-  placeholder: "Search…";
+  placeholder: "Search clipboard…";
   placeholder-color: @foreground;
   text-color: @foreground;
   background-color: transparent;
 }
 
-mode-switcher {
-  spacing: 10px;
-  background-color: transparent;
-}
-
-button {
-  padding: 6px 16px;
-  border-radius: @radius;
+message {
   background-color: @background-alt;
-  text-color: @foreground;
-  cursor: pointer;
+  border-radius: @radius;
+  padding: @padding;
 }
 
-button selected {
-  background-color: @selected;
-  text-color: @primary;
+textbox {
+  text-color: @text-secondary;
 }
 
 listview {
@@ -96,7 +82,7 @@ element selected.normal {
 }
 
 element-icon {
-  size: 28px;
+  size: 48px;
   cursor: inherit;
 }
 

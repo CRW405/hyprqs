@@ -6,13 +6,14 @@ Item {
     id: root
 
     property int bars: 20 // change it in cava.conf too
-    property int maxValue: 1000
-    property int barWidth: 3
-    property int barSpacing: 1
+    property int maxValue: 750
+    property int barWidth: 4
+    property int barSpacing: 2
     property int padding: 2
-    property int barHeight: Theme.Theme.iconSize + 2
+    // property int barHeight: Theme.Theme.barHeight
+    property int barHeight: Theme.Theme.iconSize * 2
     property int radius: Theme.Theme.radius
-    property int barRadius: Math.max(1, Math.round(barWidth / 2))
+    property int barRadius: Theme.Theme.radius
     property color barColor: Theme.Theme.accent
     property color backgroundColor: "transparent"
     property var values: []
@@ -41,7 +42,13 @@ Item {
 
             Rectangle {
                 width: root.barWidth
-                height: Math.max(1, Math.round(((root.values[index] || 0) / root.maxValue) * (root.height - root.padding * 2)))
+                height: {
+                    var value = root.values[index] || 0;
+                    if (value <= 0)
+                        return 0;
+
+                    return Math.max(1, Math.round((value / root.maxValue) * (root.height - root.padding * 2)));
+                }
                 radius: root.barRadius
                 color: root.barColor
                 anchors.bottom: parent.bottom

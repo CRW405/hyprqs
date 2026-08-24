@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
+import Quickshell.Services.Notifications
 import "pollers"
 import "components/widgets"
 import "components/labels"
@@ -45,171 +46,306 @@ ShellRoot {
         id: idleInhibitorPoller
     }
 
+    VolumePoller {
+        id: volumePoller
+    }
+
+    NightLightPoller {
+        id: nightLightPoller
+    }
+
+    NotificationServer {
+        id: notificationServer
+
+        keepOnReload: true
+        bodySupported: true
+        bodyMarkupSupported: true
+        imageSupported: true
+        actionsSupported: true
+        onNotification: (notification) => {
+            return notification.tracked = true;
+        }
+    }
+
     Variants {
         model: Quickshell.screens
 
         delegate: Component {
-            PanelWindow {
-                // TODO:
-                // click audio controls on cava: left to go back, middle to pause, right to skip, scroll to adjust volume
-                // center items in slots on bar, ex: center time text no matter length
-                // Notifications
-                // System Tray
-                // Hover time to see calender
-                // Volume manager
-                // Night Light / HyprSunset Manager
-                // Dashboard dropdown:
-                //      Notifications
-                //      picture thing
-                //      media controls
-                //      audio controls
-                //      settings:
-                //          Bluetooth
-                //          Wifi
-                //          Power / logout options
-                // ---
-                // TODO FIX:
-                // Worskpace manager icon misalignment
-                // cava rounding even at 0
-                // ---
-                // Commentede code catcher:
-                // anchors.fill: parent
-                // spacing: gap
-
-                id: barWindow
+            Scope {
+                id: screenScope
 
                 required property var modelData
-                property bool showCpuFahrenheit: false
-                property bool showGpuFahrenheit: false
 
-                screen: modelData
-                anchors.top: true
-                anchors.left: true
-                anchors.right: true
-                height: Theme.Theme.barHeight
-                color: Theme.Theme.bg
+                PanelWindow {
+                    // TODO:
+                    // Figure out what to do about not enough space
+                    // Dashboard dropdown:
+                    //      Notifications
+                    //      picture thing
+                    //      media controls
+                    //      audio controls
+                    //      settings:
+                    //          Bluetooth
+                    //          Wifi
+                    //          Power / logout options
+                    // ---
+                    // Commented code catcher:
+                    // anchors.fill: parent
+                    // spacing: gap
 
-                RowLayout {
-                    id: leftSection
+                    id: barWindow
 
-                    anchors.left: parent.left
-                    anchors.leftMargin: Theme.Theme.gap
-                    anchors.verticalCenter: parent.verticalCenter
-                    spacing: Theme.Theme.gap
+                    property bool showCpuFahrenheit: false
+                    property bool showGpuFahrenheit: false
 
-                    WorkspaceSwitcher {
+                    screen: screenScope.modelData
+                    anchors.top: true
+                    anchors.left: true
+                    anchors.right: true
+                    implicitHeight: Theme.Theme.barHeight
+                    color: Theme.Theme.bg
+
+                    RowLayout {
+                        id: leftSection
+
+                        anchors.left: parent.left
+                        anchors.leftMargin: Theme.Theme.gap
+                        anchors.verticalCenter: parent.verticalCenter
+                        spacing: Theme.Theme.gap
+
+                        WorkspaceSwitcher {
+                        }
+
+                        Seperator {
+                        }
+
+                        MediaControls {
+                        }
+
                     }
 
-                    Seperator {
+                    RowLayout {
+                        id: middleSection
+
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        spacing: Theme.Theme.gap
+
+                        Seperator {
+                        }
+
+                        Clock {
+                            id: clock
+                        }
+
+                        Seperator {
+                        }
+
                     }
 
-                    CavaBars {
+                    RowLayout {
+                        id: rightSection
+
+                        anchors.right: parent.right
+                        anchors.rightMargin: Theme.Theme.gap
+                        anchors.verticalCenter: parent.verticalCenter
+                        spacing: Theme.Theme.gap
+
+                        SystemTrayWidget {
+                            screen: screenScope.modelData
+                        }
+
+                        Seperator {
+                        }
+
+                        UsageLabel {
+                            label: "C: "
+                            value: cpuPoller.cpuUsage
+                            append: "%"
+                        }
+
+                        TempToggleLabel {
+                            tempC: cpuTempPoller.tempC
+                            tempF: cpuTempPoller.tempF
+                            showFahrenheit: barWindow.showCpuFahrenheit
+                            onClicked: barWindow.showCpuFahrenheit = !barWindow.showCpuFahrenheit
+                        }
+
+                        Seperator {
+                        }
+
+                        TempToggleLabel {
+                            label: "G: "
+                            tempC: gpuTempPoller.tempC
+                            tempF: gpuTempPoller.tempF
+                            showFahrenheit: barWindow.showGpuFahrenheit
+                            onClicked: barWindow.showGpuFahrenheit = !barWindow.showGpuFahrenheit
+                        }
+
+                        Seperator {
+                        }
+
+                        DiskUsageLabel {
+                            label: "D: "
+                            usedStorage: storagePoller.usedStorage
+                            totalStorage: storagePoller.totalStorage
+                            percentage: storagePoller.percentage
+                        }
+
+                        Seperator {
+                        }
+
+                        UsageLabel {
+                            label: "M: "
+                            value: memPoller.memUsage
+                            append: "%"
+                        }
+
+                        Seperator {
+                        }
+
+                        VolumeWidget {
+                            volume: volumePoller.volume
+                            muted: volumePoller.muted
+                        }
+
+                        Seperator {
+                        }
+
+                        NightLightButton {
+                            nightLightEnabled: nightLightPoller.nightLightEnabled
+                            onToggleRequested: nightLightPoller.toggle()
+                        }
+
+                        Seperator {
+                            visible: batteryPoller.hasBattery
+                        }
+
+                        BatteryWidget {
+                            percentage: batteryPoller.percentage
+                            charging: batteryPoller.isCharging
+                            visible: batteryPoller.hasBattery
+                        }
+
+                        BatteryStatusLabel {
+                            status: batteryStatusPoller.status
+                            timeToFullSec: batteryStatusPoller.timeToFullSec
+                            hasBattery: batteryStatusPoller.hasBattery
+                            visible: batteryStatusPoller.hasBattery
+                        }
+
+                        Seperator {
+                            visible: batteryPoller.hasBattery
+                        }
+
+                        PowerProfileButton {
+                            profile: powerProfilePoller.profile
+                            availableProfiles: powerProfilePoller.availableProfiles
+                            visible: batteryPoller.hasBattery && powerProfilePoller.availableProfiles.length > 0
+                        }
+
+                        Seperator {
+                        }
+
+                        IdleInhibitorButton {
+                            inhibitEnabled: idleInhibitorPoller.inhibitEnabled
+                            onToggleRequested: idleInhibitorPoller.toggle()
+                        }
+
+                        Seperator {
+                        }
+
+                        NotificationIndicator {
+                            id: notificationIndicator
+
+                            unreadCount: notificationServer.trackedNotifications.values.length
+                        }
+
                     }
 
                 }
 
-                RowLayout {
-                    id: middleSection
+                PanelWindow {
+                    id: calendarWindow
 
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    spacing: Theme.Theme.gap
+                    screen: screenScope.modelData
+                    anchors.top: true
+                    anchors.left: true
+                    anchors.right: true
+                    exclusionMode: ExclusionMode.Ignore
+                    color: "transparent"
+                    property bool hoverActive: clock.hovered || calendarPopup.hovered
+                    visible: hoverActive || calendarCloseTimer.running
+                    implicitHeight: calendarPopup.implicitHeight
+                    margins.top: Theme.Theme.barHeight
+                    onHoverActiveChanged: hoverActive ? calendarCloseTimer.stop() : calendarCloseTimer.start()
 
-                    Seperator {
+                    Timer {
+                        id: calendarCloseTimer
+                        interval: 300
                     }
 
-                    Clock {
-                    }
+                    CalendarPopup {
+                        id: calendarPopup
 
-                    Seperator {
+                        anchors.horizontalCenter: parent.horizontalCenter
                     }
 
                 }
 
-                RowLayout {
-                    id: rightSection
+                PanelWindow {
+                    id: notificationWindow
 
-                    anchors.right: parent.right
-                    anchors.rightMargin: Theme.Theme.gap
-                    anchors.verticalCenter: parent.verticalCenter
-                    spacing: Theme.Theme.gap
+                    screen: screenScope.modelData
+                    anchors.top: true
+                    anchors.left: true
+                    anchors.right: true
+                    exclusionMode: ExclusionMode.Ignore
+                    color: "transparent"
+                    property bool hoverActive: notificationIndicator.hovered || notificationPopup.hovered
+                    visible: hoverActive || notificationCloseTimer.running
+                    implicitHeight: notificationPopup.implicitHeight
+                    margins.top: Theme.Theme.barHeight
+                    onHoverActiveChanged: hoverActive ? notificationCloseTimer.stop() : notificationCloseTimer.start()
 
-                    UsageLabel {
-                        label: "C: "
-                        value: cpuPoller.cpuUsage
-                        append: "%"
+                    Timer {
+                        id: notificationCloseTimer
+                        interval: 300
                     }
 
-                    TempToggleLabel {
-                        tempC: cpuTempPoller.tempC
-                        tempF: cpuTempPoller.tempF
-                        showFahrenheit: barWindow.showCpuFahrenheit
-                        onClicked: barWindow.showCpuFahrenheit = !barWindow.showCpuFahrenheit
+                    NotificationPopup {
+                        id: notificationPopup
+
+                        notifServer: notificationServer
+                        anchors.right: parent.right
+                        anchors.rightMargin: Theme.Theme.gap
                     }
 
-                    Seperator {
+                }
+
+                PanelWindow {
+                    id: toastWindow
+
+                    screen: screenScope.modelData
+                    anchors.top: true
+                    anchors.right: true
+                    exclusionMode: ExclusionMode.Ignore
+                    color: "transparent"
+                    visible: toastStack.count > 0
+                    implicitWidth: 320
+                    implicitHeight: toastStack.implicitHeight
+                    margins.top: Theme.Theme.barHeight + Theme.Theme.gap
+                    margins.right: Theme.Theme.gap
+
+                    Connections {
+                        target: notificationServer
+                        function onNotification(notification) {
+                            toastStack.show(notification);
+                        }
                     }
 
-                    UsageLabel {
-                        label: "M: "
-                        value: memPoller.memUsage
-                        append: "%"
-                    }
-
-                    Seperator {
-                    }
-
-                    TempToggleLabel {
-                        label: "G: "
-                        tempC: gpuTempPoller.tempC
-                        tempF: gpuTempPoller.tempF
-                        showFahrenheit: barWindow.showGpuFahrenheit
-                        onClicked: barWindow.showGpuFahrenheit = !barWindow.showGpuFahrenheit
-                    }
-
-                    Seperator {
-                    }
-
-                    DiskUsageLabel {
-                        label: "D: "
-                        usedStorage: storagePoller.usedStorage
-                        totalStorage: storagePoller.totalStorage
-                        percentage: storagePoller.percentage
-                    }
-
-                    Seperator {
-                        visible: batteryPoller.hasBattery
-                    }
-
-                    BatteryWidget {
-                        percentage: batteryPoller.percentage
-                        charging: batteryPoller.isCharging
-                        visible: batteryPoller.hasBattery
-                    }
-
-                    BatteryStatusLabel {
-                        status: batteryStatusPoller.status
-                        timeToFullSec: batteryStatusPoller.timeToFullSec
-                        hasBattery: batteryStatusPoller.hasBattery
-                        visible: batteryStatusPoller.hasBattery
-                    }
-
-                    Seperator {
-                        visible: batteryPoller.hasBattery
-                    }
-
-                    PowerProfileButton {
-                        profile: powerProfilePoller.profile
-                        availableProfiles: powerProfilePoller.availableProfiles
-                        visible: batteryPoller.hasBattery && powerProfilePoller.availableProfiles.length > 0
-                    }
-
-                    Seperator {
-                    }
-
-                    IdleInhibitorButton {
-                        inhibitEnabled: idleInhibitorPoller.inhibitEnabled
-                        onToggleRequested: idleInhibitorPoller.toggle()
+                    NotificationToastStack {
+                        id: toastStack
                     }
 
                 }

@@ -27,20 +27,29 @@ notify_result() {
   fi
 }
 
+store_thumbnail() {
+  if command -v magick >/dev/null 2>&1 && command -v cliphist >/dev/null 2>&1; then
+    magick "$PATH_OUT" -quality 85 jpg:- 2>/dev/null | cliphist store &
+  fi
+}
+
 case "${1:-}" in
 --now)
   grim - | tee "$PATH_OUT" | wl-copy
+  store_thumbnail
   notify_result
   ;;
 --area)
   geometry="$(slurp)" || exit 0
   [[ -z "$geometry" ]] && exit 0
   grim -g "$geometry" - | tee "$PATH_OUT" | wl-copy
+  store_thumbnail
   notify_result
   ;;
 --win)
   geometry="$(hyprctl -j activewindow | jq -r '"\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"')"
   grim -g "$geometry" - | tee "$PATH_OUT" | wl-copy
+  store_thumbnail
   notify_result
   ;;
 *)

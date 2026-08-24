@@ -8,6 +8,7 @@ import "." as Local
 // layout values with no cross-tool equivalent, so they stay local.
 QtObject {
     property color bg: Local.Palette.color.background
+    property color bgAlt: Local.Palette.color.background_light
     property color fg: Local.Palette.color.text
     property color muted: Local.Palette.color.text_secondary
     property color accent: Local.Palette.color.primary
