@@ -17,9 +17,6 @@ hl.monitor({
 	scale = "1.0",
 })
 
-require("monitors")
-require("workspaces")
-
 require("monitors") -- display setting generated config
 require("workspaces") -- display setting generated config
 
@@ -357,8 +354,9 @@ hl.bind("XF86AudioPause", hl.dsp.exec_cmd("playerctl play-pause"), { locked = tr
 hl.bind("XF86AudioPlay", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
 hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"), { locked = true })
 
-hl.bind(Mod .. " + bracketright", hl.dsp.exec_cmd("playerctl next"))
-hl.bind(Mod .. " + bracketleft", hl.dsp.exec_cmd("playerctl previous"))
+hl.bind(Mod .. " + SHIFT + bracketright", hl.dsp.exec_cmd("playerctl next"))
+hl.bind(Mod .. " + SHIFT + bracketleft", hl.dsp.exec_cmd("playerctl previous"))
+hl.bind(Mod .. " + SHIFT + P", hl.dsp.exec_cmd("playerctl play-pause"))
 hl.bind(Mod .. " + P", hl.dsp.exec_cmd("playerctl play-pause"))
 
 -- ============================================================
