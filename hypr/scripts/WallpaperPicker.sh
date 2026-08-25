@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
-# Lets you pick a wallpaper from WALLPAPER_DIR via rofi (grid of thumbnails,
-# styled after an older JaKooLit-based rofi wallpaper picker, see
-# ../rofi/config-wallpaper.rasi) and applies it through awww (swww-compatible)
-# with a short transition, targeting whichever display currently has focus so
-# each monitor can have its own wallpaper.
+# Picks a wallpaper from WALLPAPER_DIR via rofi (grid of thumbnails, see
+# ../rofi/config-wallpaper.rasi) and applies it through awww to the focused monitor.
 
 set -euo pipefail
 

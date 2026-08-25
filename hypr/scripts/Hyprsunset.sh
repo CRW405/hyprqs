@@ -90,7 +90,13 @@ cmd_auto() {
     current="$(cat "$STATE_FILE")"
     [[ "$target" != "$current" ]] && apply_state "$target"
 
-    sleep "$(($(minutes_until_next_boundary) * 60 + 5))"
+    # sleep uses CLOCK_MONOTONIC, which doesn't advance during suspend, so one
+    # long sleep would run late by however long we were asleep. Re-deriving
+    # the remaining time each short chunk self-corrects within ~60s of waking.
+    while (($(minutes_until_next_boundary) * 60 > 55)); do
+      sleep 60
+    done
+    sleep 5
   done
 }
 

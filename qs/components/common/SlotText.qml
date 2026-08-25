@@ -1,16 +1,10 @@
 import QtQuick
 import QtQuick.Layouts
 
-// Fixed-width wrapper: reserves horizontal space for the widest of
-// `widthSamples` and centers `content` within it, so dynamic-width labels
-// (percentages, temps, clock, battery status) don't shift neighboring
-// RowLayout siblings as their rendered text length changes.
-// widthSamples: [] (default) => no reservation, sizes to content's natural width.
-//
-// `content` must be explicitly bound to the id of the Text-derived child to
-// measure/center. SlotText intentionally does NOT redeclare Item's default
-// property, so MouseArea/Timer/etc. can be declared as ordinary siblings of
-// `content` without being swallowed by a single-object default property.
+// Fixed-width wrapper: reserves space for the widest of `widthSamples` and
+// centers `content` in it, so dynamic-width labels don't shift RowLayout siblings.
+// `content` must bind to the Text child to measure/center; SlotText doesn't
+// redeclare Item's default property, so other children aren't swallowed by it.
 Item {
     id: root
 

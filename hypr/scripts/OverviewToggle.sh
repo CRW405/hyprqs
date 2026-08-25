@@ -1,11 +1,6 @@
 #!/usr/bin/env bash
-# Toggles the standalone Quickshell "overview" config (qs/overview) via IPC,
-# starting it first if it isn't already running.
-# Ported from hypr/bkup/scripts/OverviewToggle.sh (AGS fallback dropped, unused here).
-#
-# Launched by path (-p), not by name (-c), so it doesn't depend on a
-# ~/.config/quickshell/overview symlink -- matches how basicBar.qml is
-# launched from hyprland.lua.
+# Toggles the standalone Quickshell "overview" config (qs/overview) via IPC, starting it if needed.
+# Launched by path (-p), not name (-c), so it doesn't need a ~/.config/quickshell/overview symlink.
 
 set -euo pipefail
 

@@ -6,54 +6,52 @@ Item {
     id: inhibitorPoller
     property bool inhibitEnabled: false
 
+    // --who= for systemd-inhibit, and the pkill -f pattern to stop it again
+    readonly property string inhibitorTag: "quickshell-idle-inhibitor"
+
+    // Re-detects real state (e.g. after Quickshell restarts while an
+    // inhibitor from a previous run is still alive) instead of assuming off.
     function refresh() {
-        if (!inhibitorProc.running) inhibitorProc.running = true
+        if (!detectProc.running) detectProc.running = true
     }
 
     function toggle() {
-        inhibitorPoller.inhibitEnabled = !inhibitorPoller.inhibitEnabled
-        if (!toggleProc.running) toggleProc.running = true
-    }
-
-    function parseValue(raw) {
-        if (typeof raw === "number") return raw
-        if (typeof raw === "boolean") return raw ? 1 : 0
-        if (typeof raw === "string") {
-            var num = parseInt(raw)
-            if (!isNaN(num)) return num
-            if (raw.toLowerCase() === "true") return 1
-            if (raw.toLowerCase() === "false") return 0
+        if (inhibitorPoller.inhibitEnabled) {
+            if (!stopProc.running) stopProc.running = true
+        } else {
+            if (!startProc.running) startProc.running = true
         }
-        return 0
     }
 
     Process {
-        id: inhibitorProc
-        command: ["hyprctl", "-j", "getoption", "misc:idle_inhibit"]
-
+        id: detectProc
+        command: ["pgrep", "-f", inhibitorPoller.inhibitorTag]
         stdout: StdioCollector {
             onStreamFinished: {
-                if (!this.text) return
-                try {
-                    var parsed = JSON.parse(this.text)
-                    var val = 0
-                    if (parsed && typeof parsed.int !== "undefined") val = inhibitorPoller.parseValue(parsed.int)
-                    else if (parsed && typeof parsed.value !== "undefined") val = inhibitorPoller.parseValue(parsed.value)
-                    else if (parsed && typeof parsed.str !== "undefined") val = inhibitorPoller.parseValue(parsed.str)
-                    else if (parsed && typeof parsed.data !== "undefined") val = inhibitorPoller.parseValue(parsed.data)
-                    inhibitorPoller.inhibitEnabled = val === 1 || val === true
-                } catch (e) {
-                    inhibitorPoller.inhibitEnabled = false
-                }
+                inhibitorPoller.inhibitEnabled = this.text.trim().length > 0
             }
         }
+    }
 
-        Component.onCompleted: running = true
+    // Held open for as long as the inhibitor should apply; hypridle honors
+    // it via general.ignore_dbus_inhibit = false in hypr/hypridle.conf.
+    Process {
+        id: startProc
+        command: [
+            "systemd-inhibit",
+            "--what=idle",
+            "--who=" + inhibitorPoller.inhibitorTag,
+            "--why=Idle inhibitor toggled from bar",
+            "--mode=block",
+            "sleep", "infinity"
+        ]
+        onRunningChanged: if (running) inhibitorPoller.inhibitEnabled = true
     }
 
     Process {
-        id: toggleProc
-        command: ["hyprctl", "dispatch", "toggleinhibit"]
+        id: stopProc
+        command: ["pkill", "-f", inhibitorPoller.inhibitorTag]
+        onExited: inhibitorPoller.refresh()
     }
 
     Component.onCompleted: inhibitorPoller.refresh()

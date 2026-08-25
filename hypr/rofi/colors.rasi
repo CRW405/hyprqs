@@ -25,17 +25,13 @@
   text-light: #ffffff;
   text-dark: #1c1c1e;
 
-  /* non-color style.json values. radius/gap/padding are emitted as
-     px distances (not bare numbers) so they can be used directly in
-     border-radius/padding/spacing/margin properties. */
+  /* non-color style.json values, as px distances */
   font-family: "Monospace";
   font-size: 12;
   radius: 0px;
   gap: 5px;
   padding: 10px;
 
-  /* combined font string, and applied directly here so every widget in
-     any rofi config that imports this file gets it by default (same
-     mechanism as the color aliases above) */
+  /* combined font string, applied by default in every rofi config that imports this file */
   font: "Monospace 12";
 }

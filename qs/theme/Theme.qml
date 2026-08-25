@@ -2,10 +2,8 @@ pragma Singleton
 import QtQuick
 import "." as Local
 
-// Bar-specific theme. Colors/font/radius/gap come from the shared palette
-// (Palette.qml -> style/style.json) so the bar stays in sync with
-// hyprland.lua and rofi; barHeight/iconSize/separatorGlyph are bar-only
-// layout values with no cross-tool equivalent, so they stay local.
+// Bar-specific theme: colors/font/radius/gap mirror the shared palette (Palette.qml);
+// barHeight/iconSize/separatorGlyph are bar-only and stay local.
 QtObject {
     property color bg: Local.Palette.color.background
     property color bgAlt: Local.Palette.color.background_light

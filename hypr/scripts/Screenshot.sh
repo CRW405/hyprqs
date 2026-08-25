@@ -1,10 +1,6 @@
 #!/usr/bin/env bash
-# Screenshots via grim/slurp. Every mode copies the image to the clipboard
-# and saves it under ~/Pictures/Screenshots, then sends a notification with
-# actions to open or delete the file.
-#
-# Trimmed from hypr/bkup/scripts/ScreenShot.sh (JaKooLit-style) - dropped the
-# swaync sound-effect hooks and countdown modes this project doesn't use.
+# Screenshots via grim/slurp: copies to clipboard, saves under ~/Pictures/Screenshots,
+# and notifies with actions to open or delete the file.
 
 set -euo pipefail
 

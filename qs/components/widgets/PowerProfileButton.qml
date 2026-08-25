@@ -1,4 +1,3 @@
-import Quickshell.Io
 import QtQuick
 import QtQuick.Layouts
 import "../common"
@@ -9,11 +8,18 @@ RowLayout {
     id: root
     property string profile: "unknown"
     property var availableProfiles: []
+    property bool pending: false
     property color textColor: Theme.Theme.fg
     property int fontSize: Theme.Theme.fontSize
     property int iconSize: Theme.Theme.iconSize
+    signal profileChangeRequested(string next)
 
     spacing: Theme.Theme.gap
+    opacity: root.pending ? 0.5 : 1.0
+
+    Behavior on opacity {
+        NumberAnimation { duration: 120 }
+    }
 
     function nextProfile() {
         var list = root.availableProfiles
@@ -23,10 +29,6 @@ RowLayout {
         var idx = list.indexOf(root.profile)
         if (idx === -1) return list[0]
         return list[(idx + 1) % list.length]
-    }
-
-    Process {
-        id: setProc
     }
 
     PowerProfileIcon {
@@ -46,8 +48,7 @@ RowLayout {
         onClicked: {
             var next = root.nextProfile()
             if (!next) return
-            setProc.command = ["powerprofilesctl", "set", next]
-            setProc.running = true
+            root.profileChangeRequested(next)
         }
     }
 }

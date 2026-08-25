@@ -6,14 +6,7 @@ import QtQuick.Layouts
 import "../common"
 import "../../theme" as Theme
 
-// WorkspaceSwitcher shows 10 workspace "chips":
-// [workspace number] [icon] [icon] ...
-//
-// High-level flow:
-// 1) Build an index of real icon files from disk (icon name -> file path).
-// 2) Poll Hyprland clients as JSON.
-// 3) For each window, find its workspace + matching icon path.
-// 4) Render one icon per unique app per workspace (duplicates collapsed).
+// Shows 10 workspace chips: [workspace number] [icon] [icon] ...
 RowLayout {
     id: root
     property int fontSize: Theme.Theme.fontSize
@@ -27,28 +20,20 @@ RowLayout {
 
     spacing: chipSpacing
 
-    // Map: workspaceId -> array of icon file paths.
-    // Example: { 1: ["/usr/share/icons/.../librewolf.svg", "..."], 2: [...] }
+    // workspaceId -> array of icon file paths
     property var workspaceIcons: ({})
 
-    // Map: iconName -> absolute icon file path.
-    // We keep only one path per icon name to avoid huge duplicates.
+    // iconName -> single absolute icon file path (first match wins)
     property var availableIconPaths: ({})
 
-    // Make app names icon-friendly:
-    // "Libre Wolf" -> "Libre-Wolf"
-    // Rationale: desktop icon names usually do not contain spaces.
+    // "Libre Wolf" -> "Libre-Wolf" (desktop icon names usually have no spaces)
     function normalizeIconName(name) {
         if (!name) return ""
         return name.toString().trim().replace(/\s+/g, "-")
     }
 
-    // Parse icon index process output into availableIconPaths.
-    // Input format per line: "<icon-name>\t<absolute-file-path>"
-    //
-    // Why this exists:
-    // Theme lookup ("image://icon/...") can show missing-texture placeholders.
-    // Using direct file paths lets us skip unresolved icons entirely.
+    // Parses "<icon-name>\t<path>" lines. Direct file paths instead of
+    // image://icon/ theme lookup, which can silently show a placeholder.
     function refreshAvailableIcons(rawData) {
         if (!rawData) return
 
@@ -71,18 +56,8 @@ RowLayout {
         root.availableIconPaths = nextIconPaths
     }
 
-    // Pick the best icon file path for one Hyprland client/window.
-    //
-    // We try class-like fields first because they are usually stable:
-    // class -> initialClass -> initialTitle -> title
-    //
-    // For dotted app IDs like "org.librewolf.Librewolf":
-    // - try "librewolf" first (last segment)
-    // - then try full id
-    //
-    // Returns:
-    // - absolute icon file path string if found
-    // - null if no icon is known (we then skip rendering)
+    // Tries class -> initialClass -> initialTitle -> title; for dotted ids
+    // like "org.librewolf.Librewolf" tries the last segment before the full id.
     function iconForClient(client) {
         var rawName = client.class || client.initialClass || client.initialTitle || client.title
         var normalized = normalizeIconName(rawName).toLowerCase()
@@ -106,11 +81,8 @@ RowLayout {
         return root.workspaceIcons[workspaceId] || []
     }
 
-    // Parse hyprctl clients JSON and rebuild workspaceIcons from scratch.
-    //
-    // Important behavior:
-    // We dedupe icons per workspace. Multiple windows of the same app show
-    // one icon. That means 5 LibreWolf windows render as 1 LibreWolf icon.
+    // Rebuilds workspaceIcons from hyprctl clients JSON, deduped per workspace
+    // (5 LibreWolf windows on one workspace render as 1 icon).
     function refreshWorkspaceIcons(rawData) {
         if (!rawData) return
 
@@ -139,14 +111,8 @@ RowLayout {
         root.workspaceIcons = nextIcons
     }
 
-    // Process 1: build icon-name -> path index from common icon directories.
-    //
-    // `find` lists files, awk:
-    // - strips file extension
-    // - lowercases the icon name
-    // - keeps only first path for each icon name
-    //
-    // Output is tab-delimited lines consumed by refreshAvailableIcons().
+    // Builds icon-name -> path index from common icon dirs (cached 24h),
+    // tab-delimited output for refreshAvailableIcons().
     Process {
         id: iconIndexProc
         command: [
@@ -214,8 +180,7 @@ RowLayout {
     Repeater {
         model: 10
 
-        // One clickable workspace "chip" that contains number + all icons.
-        // MouseArea fills the whole chip, not just the text.
+        // Clickable chip: number + icons; MouseArea covers the whole chip.
         Item {
             id: workspaceItem
             property int workspaceId: index + 1

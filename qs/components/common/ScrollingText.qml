@@ -12,11 +12,11 @@ Item {
     property int maxWidth: 160
     property int pauseDuration: 1500
     property int pixelsPerSecond: 30
-    readonly property bool overflowing: label.implicitWidth > root.width
+    readonly property bool overflowing: label.implicitWidth > root.maxWidth
 
-    implicitWidth: maxWidth
+    implicitWidth: Math.min(label.implicitWidth, maxWidth)
     implicitHeight: label.implicitHeight
-    Layout.preferredWidth: maxWidth
+    Layout.preferredWidth: implicitWidth
     Layout.preferredHeight: implicitHeight
     clip: true
 

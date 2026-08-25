@@ -28,11 +28,7 @@ Item {
         if (rootMenuItem && typeof rootMenuItem.sendClosed === "function")
             rootMenuItem.sendClosed();
         menuVisible = false;
-    }
-
-    QsMenuOpener {
-        id: opener
-        menu: root.rootMenuItem || null
+        topLevel.openSubmenu(-1, null);
     }
 
     PanelWindow {
@@ -52,36 +48,12 @@ Item {
             onClicked: root.close()
         }
 
-        Rectangle {
-            id: menuBg
+        TrayMenuLevel {
+            id: topLevel
             x: root.menuX
             y: Theme.Theme.barHeight
-            color: Theme.Theme.bg
-            border.color: Theme.Theme.muted
-            border.width: 1
-            implicitWidth: menuColumn.implicitWidth + Theme.Theme.gap * 2
-            implicitHeight: menuColumn.implicitHeight + Theme.Theme.gap * 2
-
-            HoverHandler {
-                onHoveredChanged: if (!hovered)
-                    root.close()
-            }
-
-            ColumnLayout {
-                id: menuColumn
-                anchors.centerIn: parent
-                spacing: 2
-
-                Repeater {
-                    model: opener.children
-
-                    delegate: TrayMenuItemRow {
-                        required property var modelData
-                        entry: modelData
-                        onActivated: root.close()
-                    }
-                }
-            }
+            menu: root.rootMenuItem
+            closeAll: root.close
         }
     }
 }

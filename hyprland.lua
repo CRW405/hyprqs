@@ -49,7 +49,17 @@ hl.env("HYPRCURSOR_SIZE", "20")
 -- Autostart
 -- ============================================================
 
+-- works around a UWSM-less-session race that silently skipped opentabletdriver.service
+local function importSessionEnvForSystemdUser()
+	hl.exec_cmd(
+		"systemctl --user import-environment WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP HYPRLAND_INSTANCE_SIGNATURE"
+			.. " && hash dbus-update-activation-environment 2>/dev/null"
+			.. " && dbus-update-activation-environment --systemd WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP HYPRLAND_INSTANCE_SIGNATURE"
+	)
+end
+
 hl.on("hyprland.start", function()
+	importSessionEnvForSystemdUser()
 	-- hl.exec_cmd("waybar")
 	-- hl.exec_cmd("hyprpm reload -n")
 	hl.exec_cmd("qs -p " .. script_dir .. "qs/overview")
@@ -58,6 +68,8 @@ hl.on("hyprland.start", function()
 	hl.exec_cmd("wl-paste --watch cliphist store")
 	hl.exec_cmd("systemctl --user enable --now opentabletdriver")
 	hl.exec_cmd(ScriptsDir .. "Hyprsunset.sh auto")
+	hl.exec_cmd("nm-applet")
+	hl.exec_cmd("blueman-applet")
 end)
 
 -- ============================================================
@@ -138,6 +150,7 @@ bind_exec_super("W", ScriptsDir .. "WallpaperPicker.sh")
 bind_exec_super("S", ScriptsDir .. "QuickSearch.sh")
 bind_exec_super("SHIFT + S", ScriptsDir .. "Screenshot.sh --area")
 bind_exec_super("C", "hyprpicker -a -n")
+bind_exec_super("ALT + C", "qalculate-gtk")
 bind_exec_super("N", "obsidian")
 bind_exec_super("ALT + N", ScriptsDir .. "Hyprsunset.sh toggle")
 bind_exec_super("ALT + V", ScriptsDir .. "ClipManager.sh")
@@ -234,6 +247,25 @@ hl.bind(Mod .. " + SHIFT + Return", function()
 		showDropTerm()
 	end
 end)
+
+-- ============================================================
+-- Idle / Lock / Lid
+-- ============================================================
+
+local hyprlockCmd = "pidof hyprlock || hyprlock -c " .. script_dir .. "hypr/hyprlock.conf &"
+
+-- hypridle's own -c flag is broken in this build; XDG_CONFIG_HOME is the override that works.
+hl.on("hyprland.start", function()
+	hl.exec_cmd("pidof hypridle || XDG_CONFIG_HOME=" .. script_dir .. " hypridle &")
+end)
+
+-- hyprlock's -c does work, and is required: our config isn't at its default path.
+-- Lid-close doesn't call systemctl suspend - logind already suspends on lid close;
+-- this just gives hyprlock a head start before hypridle's before_sleep_cmd fires.
+hl.bind("switch:on:Lid Switch", hl.dsp.exec_cmd(hyprlockCmd), { locked = true })
+
+-- Manual lock, independent of the idle/logind roundtrip.
+hl.bind("CTRL + ALT + L", hl.dsp.exec_cmd(hyprlockCmd), { locked = true })
 
 -- ============================================================
 -- Workspace Layout Toggle
@@ -377,6 +409,12 @@ hl.window_rule({
 })
 
 hl.window_rule({
+	name = "float-qalculate",
+	match = { class = "^[Qq]alculate-gtk$" },
+	float = true,
+})
+
+hl.window_rule({
 	name = "float-nwg-displays",
 	match = { class = "^nwg-displays$" },
 	float = true,
@@ -457,6 +495,9 @@ hl.config({
 	misc = {
 		force_default_wallpaper = -1,
 		disable_hyprland_logo = true,
+		-- lets a fresh hyprlock take over if a prior instance crashed/hung,
+		-- instead of leaving the session permanently unlockable
+		allow_session_lock_restore = true,
 	},
 })
 

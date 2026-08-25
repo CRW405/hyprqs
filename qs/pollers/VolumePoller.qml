@@ -4,9 +4,7 @@ import QtQuick
 Item {
     id: root
 
-    // Reactive, not polled: PwObjectTracker subscribes to the default sink
-    // so `audio` stays live-updated, including changes made by wpctl (from
-    // this widget, CavaBars' scroll controls, or hardware media keys).
+    // Reactive via PwObjectTracker, not polled - stays live for wpctl/media-key changes too.
     PwObjectTracker {
         objects: [Pipewire.defaultAudioSink]
     }

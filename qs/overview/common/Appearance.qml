@@ -16,11 +16,8 @@ Singleton {
     property QtObject font
     property QtObject sizes
 
-    // Seed colors only (background/on-background/primary/on-primary) come
-    // from the shared palette (Theme.Palette -> style/style.json) so the
-    // overview roughly matches the rest of the setup; everything else here
-    // is this vendored module's own Material-3 derivation (ColorUtils.mix
-    // etc. below), left untouched.
+    // Only the seed colors come from the shared palette (style/style.json);
+    // everything else is this vendored module's own Material-3 derivation.
     m3colors: QtObject {
         property bool darkmode: true
         property color m3primary: Theme.Palette.color.primary

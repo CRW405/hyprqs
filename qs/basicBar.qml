@@ -290,7 +290,9 @@ ShellRoot {
                                 PowerProfileButton {
                                     profile: powerProfilePoller.profile
                                     availableProfiles: powerProfilePoller.availableProfiles
+                                    pending: powerProfilePoller.pending
                                     visible: batteryPoller.hasBattery && powerProfilePoller.availableProfiles.length > 0
+                                    onProfileChangeRequested: next => powerProfilePoller.setProfile(next)
                                 }
 
                                 Seperator {
