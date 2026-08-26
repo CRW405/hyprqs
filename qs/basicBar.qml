@@ -97,6 +97,7 @@ ShellRoot {
 
                     property bool showCpuFahrenheit: false
                     property bool showGpuFahrenheit: false
+                    property bool diagnosticsExpanded: true
 
                     screen: screenScope.modelData
                     anchors.top: true
@@ -207,50 +208,71 @@ ShellRoot {
                                 anchors.verticalCenter: parent.verticalCenter
                                 spacing: Theme.Theme.gap
 
-                                UsageLabel {
-                                    label: "C: "
-                                    value: cpuPoller.cpuUsage
-                                    append: "%"
-                                }
+                                WidgetFolder {
+                                    // backgroundColor: Theme.Theme.bgAlt
 
-                                TempToggleLabel {
-                                    tempC: cpuTempPoller.tempC
-                                    tempF: cpuTempPoller.tempF
-                                    showFahrenheit: barWindow.showCpuFahrenheit
-                                    onClicked: barWindow.showCpuFahrenheit = !barWindow.showCpuFahrenheit
-                                }
+                                    label: "System"
+                                    expanded: barWindow.diagnosticsExpanded
+                                    onToggleRequested: barWindow.diagnosticsExpanded = !barWindow.diagnosticsExpanded
 
-                                Seperator {
-                                }
+                                    Seperator {
+                                        visible: barWindow.diagnosticsExpanded
+                                    }
 
-                                TempToggleLabel {
-                                    label: "G: "
-                                    tempC: gpuTempPoller.tempC
-                                    tempF: gpuTempPoller.tempF
-                                    showFahrenheit: barWindow.showGpuFahrenheit
-                                    onClicked: barWindow.showGpuFahrenheit = !barWindow.showGpuFahrenheit
-                                }
+                                    UsageLabel {
+                                        label: "CPU: "
+                                        value: cpuPoller.cpuUsage
+                                        append: "%"
+                                        visible: barWindow.diagnosticsExpanded
+                                    }
 
-                                Seperator {
-                                }
+                                    TempToggleLabel {
+                                        tempC: cpuTempPoller.tempC
+                                        tempF: cpuTempPoller.tempF
+                                        showFahrenheit: barWindow.showCpuFahrenheit
+                                        onClicked: barWindow.showCpuFahrenheit = !barWindow.showCpuFahrenheit
+                                        visible: barWindow.diagnosticsExpanded
+                                    }
 
-                                DiskUsageLabel {
-                                    label: "D: "
-                                    usedStorage: storagePoller.usedStorage
-                                    totalStorage: storagePoller.totalStorage
-                                    percentage: storagePoller.percentage
-                                }
+                                    Seperator {
+                                        visible: barWindow.diagnosticsExpanded
+                                    }
 
-                                Seperator {
-                                }
+                                    TempToggleLabel {
+                                        label: "GPU: "
+                                        tempC: gpuTempPoller.tempC
+                                        tempF: gpuTempPoller.tempF
+                                        showFahrenheit: barWindow.showGpuFahrenheit
+                                        onClicked: barWindow.showGpuFahrenheit = !barWindow.showGpuFahrenheit
+                                        visible: barWindow.diagnosticsExpanded
+                                    }
 
-                                UsageLabel {
-                                    label: "M: "
-                                    value: memPoller.memUsage
-                                    append: "%"
-                                }
+                                    Seperator {
+                                        visible: barWindow.diagnosticsExpanded
+                                    }
 
-                                Seperator {
+                                    DiskUsageLabel {
+                                        label: "Disk: "
+                                        usedStorage: storagePoller.usedStorage
+                                        totalStorage: storagePoller.totalStorage
+                                        percentage: storagePoller.percentage
+                                        visible: barWindow.diagnosticsExpanded
+                                    }
+
+                                    Seperator {
+                                        visible: barWindow.diagnosticsExpanded
+                                    }
+
+                                    UsageLabel {
+                                        label: "Mem: "
+                                        value: memPoller.memUsage
+                                        append: "%"
+                                        visible: barWindow.diagnosticsExpanded
+                                    }
+
+                                    Seperator {
+                                    }
+
                                 }
 
                                 VolumeWidget {
@@ -292,7 +314,9 @@ ShellRoot {
                                     availableProfiles: powerProfilePoller.availableProfiles
                                     pending: powerProfilePoller.pending
                                     visible: batteryPoller.hasBattery && powerProfilePoller.availableProfiles.length > 0
-                                    onProfileChangeRequested: next => powerProfilePoller.setProfile(next)
+                                    onProfileChangeRequested: (next) => {
+                                        return powerProfilePoller.setProfile(next);
+                                    }
                                 }
 
                                 Seperator {
@@ -314,13 +338,14 @@ ShellRoot {
                 PanelWindow {
                     id: calendarWindow
 
+                    property bool hoverActive: clock.hovered || calendarPopup.hovered
+
                     screen: screenScope.modelData
                     anchors.top: true
                     anchors.left: true
                     anchors.right: true
                     exclusionMode: ExclusionMode.Ignore
                     color: "transparent"
-                    property bool hoverActive: clock.hovered || calendarPopup.hovered
                     visible: hoverActive || calendarCloseTimer.running
                     implicitHeight: calendarPopup.implicitHeight
                     margins.top: Theme.Theme.barHeight
@@ -328,6 +353,7 @@ ShellRoot {
 
                     Timer {
                         id: calendarCloseTimer
+
                         interval: 300
                     }
 
@@ -342,13 +368,14 @@ ShellRoot {
                 PanelWindow {
                     id: notificationWindow
 
+                    property bool hoverActive: notificationIndicator.hovered || notificationPopup.hovered
+
                     screen: screenScope.modelData
                     anchors.top: true
                     anchors.left: true
                     anchors.right: true
                     exclusionMode: ExclusionMode.Ignore
                     color: "transparent"
-                    property bool hoverActive: notificationIndicator.hovered || notificationPopup.hovered
                     visible: hoverActive || notificationCloseTimer.running
                     implicitHeight: notificationPopup.implicitHeight
                     margins.top: Theme.Theme.barHeight
@@ -356,6 +383,7 @@ ShellRoot {
 
                     Timer {
                         id: notificationCloseTimer
+
                         interval: 300
                     }
 
@@ -384,10 +412,11 @@ ShellRoot {
                     margins.right: Theme.Theme.gap
 
                     Connections {
-                        target: notificationServer
                         function onNotification(notification) {
                             toastStack.show(notification);
                         }
+
+                        target: notificationServer
                     }
 
                     NotificationToastStack {

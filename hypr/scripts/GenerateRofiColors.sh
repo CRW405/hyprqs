@@ -10,7 +10,8 @@ OUT="$REPO_DIR/hypr/rofi/colors.rasi"
 
 TMP="$OUT.tmp"
 
-jq -r '
+# style.json supports // and /* */ comments (JSONC); jq needs them stripped first
+python3 "$REPO_DIR/style/lib/strip_jsonc.py" <"$STYLE_JSON" | jq -r '
   .color as $c |
   ($c | to_entries | map("  \(.key | gsub("_"; "-")): #\(.value);") | join("\n")) as $rawColors |
   "* {\n" +
@@ -34,6 +35,6 @@ jq -r '
   "  /* combined font string, applied by default in every rofi config that imports this file */\n" +
   "  font: \"" + .font.family + " " + (.font.size | tostring) + "\";\n" +
   "}"
-' "$STYLE_JSON" >"$TMP"
+' >"$TMP"
 
 mv "$TMP" "$OUT"

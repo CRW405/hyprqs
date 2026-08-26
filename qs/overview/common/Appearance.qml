@@ -4,10 +4,10 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 import "functions"
-import "../../theme" as Theme
 
 Singleton {
     id: root
+
     property QtObject m3colors
     property QtObject animation
     property QtObject animationCurves
@@ -20,28 +20,28 @@ Singleton {
     // everything else is this vendored module's own Material-3 derivation.
     m3colors: QtObject {
         property bool darkmode: true
-        property color m3primary: Theme.Palette.color.primary
-        property color m3onPrimary: Theme.Palette.color.text_light
+        property color m3primary: SharedPalette.color.primary
+        property color m3onPrimary: SharedPalette.color.text_light
         property color m3primaryContainer: "#5D386A"
         property color m3onPrimaryContainer: "#F9D8FF"
-        property color m3secondary: "#D5C0D7"
+        property color m3secondary: SharedPalette.color.primary
         property color m3onSecondary: "#392C3D"
         property color m3secondaryContainer: "#534457"
         property color m3onSecondaryContainer: "#F2DCF3"
-        property color m3background: Theme.Palette.color.background
-        property color m3onBackground: Theme.Palette.color.text
-        property color m3surface: Theme.Palette.color.background
-        property color m3surfaceContainerLow: "#1F1A1F"
-        property color m3surfaceContainer: "#231E23"
+        property color m3background: SharedPalette.color.background
+        property color m3onBackground: SharedPalette.color.text
+        property color m3surface: SharedPalette.color.background
+        property color m3surfaceContainerLow: SharedPalette.color.background_dark
+        property color m3surfaceContainer: SharedPalette.color.background_light
         property color m3surfaceContainerHigh: "#2D282E"
         property color m3surfaceContainerHighest: "#383339"
         property color m3onSurface: "#EAE0E7"
         property color m3surfaceVariant: "#4C444D"
-        property color m3onSurfaceVariant: "#CFC3CD"
-        property color m3inverseSurface: "#EAE0E7"
-        property color m3inverseOnSurface: "#342F34"
-        property color m3outline: "#988E97"
-        property color m3outlineVariant: "#4C444D"
+        property color m3onSurfaceVariant: SharedPalette.color.text
+        property color m3inverseSurface: SharedPalette.color.text
+        property color m3inverseOnSurface: SharedPalette.color.background_dark
+        property color m3outline: SharedPalette.color.border
+        property color m3outlineVariant: SharedPalette.color.border
         property color m3shadow: "#000000"
     }
 
@@ -68,6 +68,7 @@ Singleton {
         property color colOnTooltip: m3colors.m3inverseOnSurface
         property color colShadow: ColorUtils.transparentize(m3colors.m3shadow, 0.7)
         property color colOutline: m3colors.m3outline
+        property color colWorkspaceBorder: SharedPalette.color.border
     }
 
     rounding: QtObject {
@@ -77,15 +78,15 @@ Singleton {
         property int normal: 17
         property int large: 23
         property int full: 9999
-        property int screenRounding: large
-        property int windowRounding: 18
+        property int screenRounding: SharedPalette.radius
+        property int windowRounding: SharedPalette.radius
     }
 
     font: QtObject {
         property QtObject family: QtObject {
-            property string main: "sans-serif"
-            property string title: "sans-serif"
-            property string expressive: "sans-serif"
+            property string main: SharedPalette.font.family
+            property string title: SharedPalette.font.family
+            property string expressive: SharedPalette.font.family
         }
         property QtObject pixelSize: QtObject {
             property int smaller: 12

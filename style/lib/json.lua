@@ -1,8 +1,21 @@
 local M = {}
 
+-- skips whitespace plus // and /* */ comments; only ever called between tokens, never inside strings
 local function skip_ws(s, i)
-	local _, j = s:find("^[ \t\r\n]*", i)
-	return j + 1
+	while true do
+		local _, j = s:find("^[ \t\r\n]*", i)
+		i = j + 1
+		if s:sub(i, i + 1) == "//" then
+			local _, j2 = s:find("[^\n]*", i + 2)
+			i = j2 + 1
+		elseif s:sub(i, i + 1) == "/*" then
+			local closeStart, closeEnd = s:find("*/", i + 2, true)
+			assert(closeStart, "unterminated comment at " .. i)
+			i = closeEnd + 1
+		else
+			return i
+		end
+	end
 end
 
 local decode_value -- forward declaration

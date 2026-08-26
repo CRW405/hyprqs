@@ -6,6 +6,7 @@ import "../../theme" as Theme
 
 RowLayout {
     id: root
+
     property real volume: 0
     property bool muted: false
     property color textColor: Theme.Theme.fg
@@ -19,15 +20,17 @@ RowLayout {
     }
 
     SlotText {
-        widthSamples: ["V: 100%", "V: Muted"]
+        widthSamples: ["Vol: 100%", "Vol: Muted"]
         content: volumeText
 
         StyledText {
             id: volumeText
-            text: root.muted ? "V: Muted" : "V: " + Math.round(root.volume * 100) + "%"
+
+            text: root.muted ? "Vol: Muted" : "Vol: " + Math.round(root.volume * 100) + "%"
             textColor: root.muted ? root.mutedColor : root.textColor
             fontSize: root.fontSize
         }
+
     }
 
     MouseArea {
@@ -37,8 +40,13 @@ RowLayout {
             wpctlProc.running = true;
         }
         onWheel: (wheel) => {
+            if (wheel.angleDelta.y === 0) {
+                wheel.accepted = false;
+                return;
+            }
             wpctlProc.command = wheel.angleDelta.y > 0 ? ["wpctl", "set-volume", "-l", "1", "@DEFAULT_AUDIO_SINK@", "1%+"] : ["wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", "1%-"];
             wpctlProc.running = true;
         }
     }
+
 }

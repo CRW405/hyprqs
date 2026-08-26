@@ -18,7 +18,7 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         width: parent.width - 2
         height: parent.height
-        radius: 2
+        radius: 0
         color: "transparent"
         border.width: 1
         border.color: root.color

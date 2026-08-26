@@ -26,12 +26,12 @@
   text-dark: #1c1c1e;
 
   /* non-color style.json values, as px distances */
-  font-family: "Monospace";
+  font-family: "Departure Mono";
   font-size: 12;
   radius: 0px;
   gap: 5px;
   padding: 10px;
 
   /* combined font string, applied by default in every rofi config that imports this file */
-  font: "Monospace 12";
+  font: "Departure Mono 12";
 }

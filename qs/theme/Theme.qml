@@ -10,6 +10,7 @@ QtObject {
     property color fg: Local.Palette.color.text
     property color muted: Local.Palette.color.text_secondary
     property color accent: Local.Palette.color.primary
+    property color secondary: Local.Palette.color.secondary
     property color warn: Local.Palette.color.warning
     property int fontSize: Local.Palette.font.size
     property string fontFamily: Local.Palette.font.family

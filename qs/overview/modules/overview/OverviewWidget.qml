@@ -58,7 +58,7 @@ Item {
 
         implicitWidth: workspaceColumnLayout.implicitWidth + padding * 2
         implicitHeight: workspaceColumnLayout.implicitHeight + padding * 2
-        radius: Appearance.rounding.screenRounding * root.scale + padding
+        radius: Appearance.rounding.screenRounding * root.scale
         color: Appearance.colors.colLayer0
         border.width: 1
         border.color: Appearance.colors.colLayer0Border
@@ -92,7 +92,7 @@ Item {
                             color: hoveredWhileDragging ? hoveredWorkspaceColor : defaultWorkspaceColor
                             radius: Appearance.rounding.screenRounding * root.scale
                             border.width: 2
-                            border.color: hoveredWhileDragging ? hoveredBorderColor : "transparent"
+                            border.color: hoveredWhileDragging ? hoveredBorderColor : Appearance.colors.colWorkspaceBorder
 
                             StyledText {
                                 anchors.centerIn: parent
@@ -102,7 +102,7 @@ Item {
                                     weight: Font.DemiBold
                                     family: Appearance.font.family.expressive
                                 }
-                                color: ColorUtils.transparentize(Appearance.colors.colOnLayer1, 0.8)
+                                color: ColorUtils.transparentize(Appearance.colors.colOnLayer1, 0.5)
                                 horizontalAlignment: Text.AlignHCenter
                                 verticalAlignment: Text.AlignVCenter
                             }

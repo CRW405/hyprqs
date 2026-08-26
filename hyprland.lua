@@ -252,7 +252,8 @@ end)
 -- Idle / Lock / Lid
 -- ============================================================
 
-local hyprlockCmd = "pidof hyprlock || hyprlock -c " .. script_dir .. "hypr/hyprlock.conf &"
+-- Keep hyprlock.conf's $font in sync with style/style.json before every lock, like the rofi scripts do for colors.rasi.
+local hyprlockCmd = script_dir .. "hypr/scripts/SyncHyprlockFont.sh; pidof hyprlock || hyprlock -c " .. script_dir .. "hypr/hyprlock.conf &"
 
 -- hypridle's own -c flag is broken in this build; XDG_CONFIG_HOME is the override that works.
 hl.on("hyprland.start", function()

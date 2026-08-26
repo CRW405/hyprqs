@@ -3,8 +3,10 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 
-// Shared style tokens (colors/font/radius/spacing) for hyprland.lua and the rofi menus.
-// Reads style/style.json live; defaults below only apply until it loads.
+// Own copy of qs/theme/Palette.qml's style.json reader: quickshell runs qs/overview as a
+// separate process rooted at qs/overview, so a singleton living outside that root (qs/theme)
+// can't be imported here - "Module path is outside of the config folder" breaks resolution.
+// Defaults below only apply until style.json loads.
 QtObject {
 	id: root
 
@@ -41,19 +43,18 @@ QtObject {
 	}
 
 	property FileView _file: FileView {
-		// Qt.resolvedUrl resolves against Quickshell's virtual -p root, not this
-		// file's real path; Quickshell.shellDir keeps this correct regardless of checkout location.
-		path: Quickshell.shellDir + "/../style/style.json"
+		// Quickshell.shellDir is this process's -p root (qs/overview), two levels above style/style.json.
+		path: Quickshell.shellDir + "/../../style/style.json"
 		watchChanges: true
 		onFileChanged: reload()
 		onLoaded: {
 			try {
 				root._apply(JSON.parse(root._stripComments(text())))
 			} catch (e) {
-				console.warn("Palette: failed to parse style/style.json:", e)
+				console.warn("SharedPalette: failed to parse style/style.json:", e)
 			}
 		}
-		onLoadFailed: error => console.warn("Palette: failed to load style/style.json:", error)
+		onLoadFailed: error => console.warn("SharedPalette: failed to load style/style.json:", error)
 	}
 
 	// strips // and /* */ comments outside of string literals so style.json can support JSONC

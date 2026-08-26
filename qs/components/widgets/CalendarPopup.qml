@@ -11,7 +11,7 @@ Rectangle {
 
     function ansiToRichText(raw) {
         var withSpan = raw.replace(/\x1b\[7m/g, "<span style=\"color:" + Theme.Theme.accent + ";\">").replace(/\x1b\[0m/g, "</span>");
-        return "<pre style=\"margin:0;\">" + withSpan + "</pre>";
+        return "<pre style=\"margin:0; font-family:'" + Theme.Theme.fontFamily + "';\">" + withSpan + "</pre>";
     }
 
     color: Theme.Theme.bg

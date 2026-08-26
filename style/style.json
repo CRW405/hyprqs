@@ -19,7 +19,9 @@
         "text_dark": "1c1c1e"
     },
     "font": {
-        "family": "Monospace",
+        // "family": "VT323",
+        "family": "Departure Mono",
+        // "family": "Terminus",
         "size": 12
     },
     "radius": 0,
