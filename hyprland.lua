@@ -253,7 +253,10 @@ end)
 -- ============================================================
 
 -- Keep hyprlock.conf's $font in sync with style/style.json before every lock, like the rofi scripts do for colors.rasi.
-local hyprlockCmd = script_dir .. "hypr/scripts/SyncHyprlockFont.sh; pidof hyprlock || hyprlock -c " .. script_dir .. "hypr/hyprlock.conf &"
+local hyprlockCmd = script_dir
+	.. "hypr/scripts/SyncHyprlockFont.sh; pidof hyprlock || hyprlock -c "
+	.. script_dir
+	.. "hypr/hyprlock.conf &"
 
 -- hypridle's own -c flag is broken in this build; XDG_CONFIG_HOME is the override that works.
 hl.on("hyprland.start", function()
@@ -507,7 +510,7 @@ hl.config({
 		kb_layout = "us",
 		kb_variant = "",
 		kb_model = "",
-		kb_options = "",
+		kb_options = "caps:escape",
 		kb_rules = "",
 
 		repeat_rate = 50,
@@ -516,6 +519,8 @@ hl.config({
 		follow_mouse = 1,
 
 		sensitivity = 0, -- -1.0 - 1.0, 0 means no modification.
+
+		numlock_by_default = true,
 
 		touchpad = {
 			natural_scroll = false,
